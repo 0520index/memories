@@ -36,8 +36,29 @@
   box-sizing: border-box;
 }
 
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
 body {
   margin: 0;
+  min-height: 100dvh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  /* 縦スクロールのみ許可（地図は個別に上書き） */
+  touch-action: pan-y;
+  position: relative;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   min-height: 100dvh;
 }
 
@@ -292,8 +313,9 @@ code {
 
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 6px;
+  max-width: 100%;
 }
 
 .category-option {
@@ -331,29 +353,37 @@ code {
   white-space: nowrap;
 }
 
-.import-box {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px;
-  border-radius: 14px;
-  background: var(--primary-soft);
-  border: 1px dashed var(--primary);
-}
-
-.import-head {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-
-.import-preview {
+.link-buttons {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding-top: 4px;
+  padding: 0 14px 10px;
+}
+
+.link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-chip:active {
+  transform: scale(0.98);
+}
+
+.form .link-buttons {
+  padding: 0;
+  margin-top: -8px;
 }
 
 .results button.selected {
@@ -400,9 +430,11 @@ code {
 }
 
 .app {
-  max-width: 720px;
+  max-width: min(720px, 100%);
   margin: 0 auto;
   padding: 0 16px calc(96px + env(safe-area-inset-bottom));
+  overflow-x: hidden;
+  width: 100%;
 }
 
 .topbar {
@@ -456,6 +488,11 @@ code {
   margin: 16px 0 12px;
   border-bottom: 1px solid var(--border);
   overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
 }
 
 .tabs button {
@@ -489,12 +526,15 @@ code {
   flex-direction: column;
   gap: 8px;
   margin-bottom: 12px;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .chips {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  max-width: 100%;
 }
 
 .chip {
@@ -535,7 +575,7 @@ code {
   box-shadow: var(--shadow);
   border-left: 5px solid var(--primary);
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
   overflow: hidden;
 }
 
@@ -544,13 +584,28 @@ code {
 }
 
 .place-body {
-  flex: 1;
+  width: 100%;
   min-width: 0;
   text-align: left;
-  padding: 14px 16px;
+  padding: 14px 16px 8px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.place-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 8px 10px;
+}
+
+.place-actions .link-buttons {
+  padding: 0;
+  flex: 1;
+  min-width: 0;
 }
 
 .place-head {
@@ -600,8 +655,8 @@ code {
 }
 
 .visited-button {
-  margin: 14px 14px 0 0;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .empty {
@@ -739,14 +794,23 @@ code {
 }
 
 /* map */
+.map-wrap {
+  max-width: 100%;
+  overflow: hidden;
+}
+
 .map {
   border-radius: var(--radius);
   z-index: 0;
+  max-width: 100%;
+  /* 地図内は縦横パンを許可 */
+  touch-action: manipulation;
 }
 
 .map.full {
   height: calc(100dvh - 300px);
   min-height: 360px;
+  width: 100%;
 }
 
 .picker {
@@ -831,4 +895,22 @@ code {
 
 .leaflet-container {
   font: inherit;
+  max-width: 100%;
+  touch-action: pan-x pan-y;
+}
+
+.modal,
+.card,
+.form,
+.content,
+.list {
+  max-width: 100%;
+}
+
+.invite-code,
+.shortcut-url,
+.place-title,
+.place-memo {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }

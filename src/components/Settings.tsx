@@ -18,9 +18,7 @@ export default function Settings({ couple, userId, onClose, onCoupleChange }: Pr
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
-  const [copiedShare, setCopiedShare] = useState(false)
   const [updating, setUpdating] = useState(false)
-  const shareBase = `${window.location.origin}/?text=`
 
   useEffect(() => {
     supabase
@@ -50,12 +48,6 @@ export default function Settings({ couple, userId, onClose, onCoupleChange }: Pr
     await navigator.clipboard.writeText(couple.invite_code)
     setCopied(true)
     setTimeout(() => setCopied(false), 1500)
-  }
-
-  async function copyShareBase() {
-    await navigator.clipboard.writeText(shareBase)
-    setCopiedShare(true)
-    setTimeout(() => setCopiedShare(false), 1500)
   }
 
   return (
@@ -96,32 +88,6 @@ export default function Settings({ couple, userId, onClose, onCoupleChange }: Pr
             </div>
           </div>
         )}
-      </section>
-
-      <section className="settings-section">
-        <h3>iPhone からインスタの共有</h3>
-        <p className="muted small-text">
-          iPhone ではアプリが共有メニューに直接出せません。いちばん簡単なのは「コピー →
-          クリップボードから」。共有シートに出したい場合は、下のショートカットを一度だけ作ってください。
-        </p>
-        <ol className="help-steps">
-          <li>「ショートカット」アプリで新規作成</li>
-          <li>情報（ⓘ）→「共有シートに表示」をオン（受け取る種類: テキスト・URL）</li>
-          <li>アクション「URL」を追加し、次を貼る（入力は後ろに付ける）</li>
-        </ol>
-        <div className="invite">
-          <code className="shortcut-url">{shareBase}</code>
-          <button type="button" className="secondary full" onClick={copyShareBase}>
-            {copiedShare ? 'コピーしました' : '共有用URLをコピー'}
-          </button>
-        </div>
-        <ol className="help-steps" start={4}>
-          <li>
-            URLの末尾が <code>?text=</code> になるようにし、変数「ショートカット入力」をつなげる
-          </li>
-          <li>アクション「URLを開く」でそのURLを開く</li>
-          <li>名前を「ふたりの地図」にして保存 → インスタの共有から選べます</li>
-        </ol>
       </section>
 
       <section className="settings-section">

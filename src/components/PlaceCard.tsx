@@ -2,6 +2,7 @@ import { formatDate } from '../lib/date'
 import { getCategory } from '../lib/categories'
 import type { Place } from '../types'
 import Stars from './Stars'
+import LinkButtons from './LinkButtons'
 
 type Props = {
   place: Place
@@ -38,11 +39,14 @@ export default function PlaceCard({ place, onEdit, onVisited }: Props) {
           </div>
         )}
       </button>
-      {place.status === 'want' && (
-        <button className="secondary small visited-button" onClick={onVisited}>
-          {cat.markDone}
-        </button>
-      )}
+      <div className="place-actions">
+        <LinkButtons texts={[place.memo, place.address]} />
+        {place.status === 'want' && (
+          <button className="secondary small visited-button" onClick={onVisited}>
+            {cat.markDone}
+          </button>
+        )}
+      </div>
     </li>
   )
 }

@@ -1,18 +1,14 @@
 import { useState, type FormEvent } from 'react'
 import type { Place, PlaceInput } from '../types'
 import { CATEGORIES, DEFAULT_CATEGORY, getCategory } from '../lib/categories'
-import type { ImportResult } from '../lib/importSnippet'
-import type { GeoResult } from '../lib/geocode'
 import Stars from './Stars'
 import LocationPicker from './LocationPicker'
-import ImportPaste from './ImportPaste'
+import LinkButtons from './LinkButtons'
 import Modal from './Modal'
 
 type Props = {
   place: Place | null
   preset?: Partial<PlaceInput>
-  /** 共有やクリップボードから渡された生テキスト */
-  importText?: string
   existingTags: string[]
   onSave: (input: PlaceInput, id?: string) => Promise<void>
   onDelete: (id: string) => Promise<void>
@@ -33,15 +29,7 @@ const EMPTY: PlaceInput = {
   lng: null,
 }
 
-export default function PlaceForm({
-  place,
-  preset,
-  importText,
-  existingTags,
-  onSave,
-  onDelete,
-  onClose,
-}: Props) {
+export default function PlaceForm({ place, preset, existingTags, onSave, onDelete, onClose }: Props) {
   const [form, setForm] = useState<PlaceInput>(() => ({ ...EMPTY, ...pick(place), ...preset }))
   const [tagDraft, setTagDraft] = useState('')
   const [showMap, setShowMap] = useState(form.lat != null)
@@ -51,39 +39,11 @@ export default function PlaceForm({
   const set = <K extends keyof PlaceInput>(key: K, value: PlaceInput[K]) => setForm((f) => ({ ...f, [key]: value }))
   const cat = getCategory(form.category)
   const visited = form.status === 'visited'
-  const isNew = !place
 
   function addTag(raw: string) {
     const t = raw.trim().replace(/^#/, '')
     if (t && !form.tags.includes(t)) set('tags', [...form.tags, t])
     setTagDraft('')
-  }
-
-  function applyImport({ result, geo }: { result: ImportResult; geo: GeoResult | null }) {
-    setForm((f) => {
-      const next = { ...f }
-      if (result.title && (!f.title || importText)) next.title = result.title
-      if (result.category && (!place || importText)) next.category = result.category
-      if (result.tags.length) next.tags = [...new Set([...f.tags, ...result.tags])]
-      if (result.memo) {
-        if (!f.memo || importText) next.memo = result.memo
-        else if (!f.memo.includes(result.memo.split('\n')[0] ?? '')) {
-          next.memo = `${f.memo}\n\n${result.memo}`
-        }
-      }
-      if (geo) {
-        next.lat = geo.lat
-        next.lng = geo.lng
-        next.address = geo.label
-      } else if (result.searchQuery && !f.address) {
-        next.address = result.searchQuery
-      }
-      return next
-    })
-    if (geo) setShowMap(true)
-    else if (result.searchQuery && getCategory(result.category ?? form.category).showLocation) {
-      setShowMap(true)
-    }
   }
 
   async function submit(e: FormEvent) {
@@ -125,14 +85,13 @@ export default function PlaceForm({
   }
 
   const suggestions = existingTags.filter((t) => !form.tags.includes(t))
+  const memoPlaceholder = visited
+    ? `${cat.memoDone}\nインスタのリンクなどもここに貼れます`
+    : `${cat.memoWant}\nインスタのリンクなどもここに貼れます`
 
   return (
     <Modal title={place ? '編集' : '追加'} onClose={onClose}>
       <form className="form" onSubmit={submit}>
-        {isNew && (
-          <ImportPaste initialText={importText ?? ''} autoRun={Boolean(importText?.trim())} onApply={applyImport} />
-        )}
-
         <div className="field">
           <span>種類</span>
           <div className="category-grid">
@@ -195,14 +154,15 @@ export default function PlaceForm({
         )}
 
         <label>
-          メモ
+          メモ・リンク
           <textarea
             rows={4}
             value={form.memo ?? ''}
             onChange={(e) => set('memo', e.target.value)}
-            placeholder={visited ? cat.memoDone : cat.memoWant}
+            placeholder={memoPlaceholder}
           />
         </label>
+        <LinkButtons texts={[form.memo]} />
 
         <div className="field">
           <span>タグ</span>

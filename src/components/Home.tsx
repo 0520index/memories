@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { CATEGORIES, DEFAULT_CATEGORY, normalizeCategory, type Category } from '../lib/categories'
-import { consumeShareParams } from '../lib/importSnippet'
 import type { Couple, Place, PlaceInput } from '../types'
 import AnniversaryBanner from './AnniversaryBanner'
 import PlaceCard from './PlaceCard'
@@ -24,7 +23,7 @@ type Props = {
   onCoupleChange: (c: Couple | null) => void
 }
 
-type Editing = { place: Place | null; preset?: Partial<PlaceInput>; importText?: string }
+type Editing = { place: Place | null; preset?: Partial<PlaceInput> }
 
 export default function Home({ couple, userId, onCoupleChange }: Props) {
   const [places, setPlaces] = useState<Place[]>([])
@@ -35,19 +34,6 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
   const [categoryFilter, setCategoryFilter] = useState<Category | null>(null)
   const [editing, setEditing] = useState<Editing | null>(null)
   const [showSettings, setShowSettings] = useState(false)
-
-  useEffect(() => {
-    const snippet = consumeShareParams()
-    if (!snippet) return
-    setTab('want')
-    setEditing({
-      place: null,
-      preset: { status: 'want', category: categoryFilter ?? DEFAULT_CATEGORY },
-      importText: snippet,
-    })
-    // categoryFilter は初回のみ参照（共有オープン時）
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const upsertLocal = useCallback((p: Place) => {
     const normalized = { ...p, category: normalizeCategory(p.category) }
@@ -255,7 +241,6 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
         <PlaceForm
           place={editing.place}
           preset={editing.preset}
-          importText={editing.importText}
           existingTags={allTags}
           onSave={save}
           onDelete={remove}

@@ -5,6 +5,7 @@ import { DEFAULT_CENTER, TILE_ATTRIBUTION, TILE_URL, iconFor } from '../lib/mark
 import { formatDate } from '../lib/date'
 import type { Place } from '../types'
 import Stars from './Stars'
+import LinkButtons from './LinkButtons'
 
 type Props = {
   places: Place[]
@@ -26,6 +27,7 @@ export default function MapView({ places, onSelect }: Props) {
                 <strong>{p.title}</strong>
                 {p.visited_on && <div>{formatDate(p.visited_on)}</div>}
                 <Stars value={p.rating} />
+                <LinkButtons texts={[p.memo]} />
                 <button className="link" onClick={() => onSelect(p)}>
                   詳細・編集
                 </button>
