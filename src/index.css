@@ -377,6 +377,28 @@ code {
   border-left-color: #ab47bc;
 }
 
+.update-banner {
+  position: sticky;
+  top: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  padding-top: calc(10px + env(safe-area-inset-top));
+  background: #2e7d32;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.update-banner .secondary {
+  background: #fff;
+  color: #2e7d32;
+  flex-shrink: 0;
+}
+
 .app {
   max-width: 720px;
   margin: 0 auto;

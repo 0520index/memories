@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
+import { APP_VERSION, forceReloadToLatest } from '../lib/update'
 import type { Couple, Member } from '../types'
 import Modal from './Modal'
 
@@ -18,6 +19,7 @@ export default function Settings({ couple, userId, onClose, onCoupleChange }: Pr
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [copiedShare, setCopiedShare] = useState(false)
+  const [updating, setUpdating] = useState(false)
   const shareBase = `${window.location.origin}/?text=`
 
   useEffect(() => {
@@ -120,6 +122,25 @@ export default function Settings({ couple, userId, onClose, onCoupleChange }: Pr
           <li>アクション「URLを開く」でそのURLを開く</li>
           <li>名前を「ふたりの地図」にして保存 → インスタの共有から選べます</li>
         </ol>
+      </section>
+
+      <section className="settings-section">
+        <h3>アプリの更新</h3>
+        <p className="muted small-text">
+          改修を公開したあと、iPhone のホーム画面アプリが古いままのときはここから更新できます。
+        </p>
+        <p className="muted small-text">現在のバージョン: {APP_VERSION}</p>
+        <button
+          type="button"
+          className="secondary full"
+          disabled={updating}
+          onClick={async () => {
+            setUpdating(true)
+            await forceReloadToLatest()
+          }}
+        >
+          {updating ? '更新中…' : '最新版に更新（再読み込み）'}
+        </button>
       </section>
 
       <section className="settings-section">

@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# ビルドごとに書き換わるためコミットしない（ビルド時に生成）
+public/version.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
