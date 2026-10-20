@@ -68,11 +68,25 @@ export default function ImportPaste({ initialText = '', autoRun = false, onApply
     if (preview) onApply({ result: preview, geo: g })
   }
 
+  async function pasteFromClipboard() {
+    try {
+      const clip = await navigator.clipboard.readText()
+      if (!clip.trim()) {
+        setError('クリップボードが空です。インスタでコピーしてから再度タップしてください')
+        return
+      }
+      setText(clip)
+      await run(clip)
+    } catch {
+      setError('クリップボードを読めませんでした。下の欄に手動で貼り付けてください')
+    }
+  }
+
   return (
     <div className="import-box">
       <div className="import-head">
         <span>📲 インスタなどから貼り付け</span>
-        <span className="muted small-text">共有テキスト・キャプション・URL</span>
+        <span className="muted small-text">iPhone はコピー → ここへ。ショートカットも可（設定）</span>
       </div>
       <textarea
         rows={3}
@@ -80,9 +94,14 @@ export default function ImportPaste({ initialText = '', autoRun = false, onApply
         onChange={(e) => setText(e.target.value)}
         placeholder={'例:\n📍渋谷カフェ ○○\n#カフェ #渋谷\nhttps://www.instagram.com/p/...'}
       />
-      <button type="button" className="secondary" onClick={() => run()} disabled={busy}>
-        {busy ? '読み取り中…' : '読み取って入力'}
-      </button>
+      <div className="row wrap">
+        <button type="button" className="secondary" onClick={() => void pasteFromClipboard()} disabled={busy}>
+          クリップボードから
+        </button>
+        <button type="button" className="secondary" onClick={() => run()} disabled={busy}>
+          {busy ? '読み取り中…' : '読み取って入力'}
+        </button>
+      </div>
 
       {error && <p className="muted small-text">{error}</p>}
 
