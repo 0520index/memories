@@ -1,0 +1,103 @@
+# ふたりの地図
+
+彼女・彼氏と二人で「行きたい場所」「行った場所（思い出）」「また行きたい場所」を記録・共有する Web アプリです。
+スマホのブラウザで開き、「ホーム画面に追加」するとアプリのように使えます。
+
+## 機能
+
+- **種類で分類**: 場所 / 映画 / 本 / グルメ / その他（文言も「見たい」「読んだ」などに自動で切り替わる）
+- **やりたい / 思い出 / またやりたい** の3つのリスト（「行った！」「見た！」ボタンで思い出へ移動）
+- 日付・星評価（1〜5）・タグ・メモ・住所
+- 地図表示（OpenStreetMap）と、店名・住所検索 or 地図タップでの位置指定（場所・グルメ向け）
+- 付き合った日からの日数、次の100日記念・周年までのカウント
+- 二人のスマホでリアルタイム同期（招待コードでペアを作成）
+- 検索・種類・タグでの絞り込み、ダークモード対応
+- **インスタなどから貼り付け**: 共有テキスト・キャプション・URLを貼ると名前・タグ・メモ・地図候補を自動入力
+- **共有ターゲット**: ホーム画面に追加したアプリへ、インスタの「共有」から直接渡せます（Android Chrome など）
+
+## 使っているサービス（すべて無料）
+
+| 用途 | サービス | 無料枠の目安 |
+| --- | --- | --- |
+| データベース・ログイン・同期 | [Supabase](https://supabase.com) Free プラン | DB 500MB、月間 5万ユーザー（二人なら十分） |
+| 地図 | OpenStreetMap + Leaflet | 無料（API キー不要） |
+| 住所検索 | Nominatim | 無料（1秒1回まで） |
+| 公開（ホスティング） | Vercel / Cloudflare Pages / Netlify など | 個人利用は無料 |
+
+> Supabase の無料プロジェクトは **1週間アクセスがないと一時停止** します。ダッシュボードから再開すればデータはそのまま戻ります。
+
+## セットアップ
+
+### 1. Supabase プロジェクトを作る
+
+1. https://supabase.com で無料アカウントを作成し、「New project」でプロジェクトを作成（リージョンは Tokyo 推奨）
+2. 左メニュー **SQL Editor** を開き、[`supabase/schema.sql`](supabase/schema.sql) の中身をすべて貼り付けて **Run**
+   - すでに一度セットアップ済みの場合は、代わりに [`supabase/migration_add_category.sql`](supabase/migration_add_category.sql) だけ実行すれば種類機能が追加されます
+3. **Project Settings → API**（または「Connect」ボタン）から次の2つをコピー
+   - Project URL
+   - anon / publishable key（公開用のキー。`service_role` キーは使わないこと）
+
+### 2. 接続設定
+
+プロジェクト直下に `.env.local` を作成します（`.env.example` をコピー）。
+
+```
+VITE_SUPABASE_URL=https://xxxxxxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=コピーしたキー
+```
+
+### 3. ローカルで起動
+
+```bash
+npm install
+npm run dev
+```
+
+http://localhost:5173 を開きます。
+
+### 4. 二人で使い始める
+
+1. 自分が「新規登録」→ 確認メールのリンクを開く → ログイン
+2. 「新しく作る」でスペースを作成（付き合った日もここで入力）
+3. 右上の ⚙ 設定に表示される **招待コード** を相手に送る
+4. 相手も新規登録 → 「招待コードで参加」にコードを入力
+
+> 確認メールが面倒な場合は、Supabase の **Authentication → Sign In / Providers → Email** で「Confirm email」をオフにできます。
+
+## スマホから使えるように公開する（例: Vercel）
+
+1. このフォルダを GitHub にプッシュ
+2. https://vercel.com に GitHub でログイン → 「Add New Project」でリポジトリを選択
+3. **Environment Variables** に `VITE_SUPABASE_URL` と `VITE_SUPABASE_ANON_KEY` を追加して Deploy
+4. Supabase の **Authentication → URL Configuration** の「Site URL」に公開された URL（例: `https://xxxx.vercel.app`）を設定
+5. スマホで URL を開き、共有メニューから「ホーム画面に追加」
+
+### インスタから行きたい場所を追加する
+
+1. 追加画面上部の「インスタなどから貼り付け」に、キャプションや共有テキストを貼る
+2. 「読み取って入力」を押すと、名前・ハッシュタグ・リンク・地図の候補が入る
+3. 地図候補をタップして位置を確定し、保存
+
+**もっとラクにする（共有から直接）**
+
+1. 上記のとおり公開 URL をホーム画面に追加する（PWA）
+2. Instagram の投稿で「共有」→「ふたりの地図」（またはブラウザ）を選ぶ
+3. アプリが開き、貼り付け欄に内容が入った状態で追加フォームが開く
+
+> リンクだけだと店名が取れないことがあります。キャプションも一緒にコピーすると精度が上がります。インスタ公式APIでの完全自動取得は使っていません（無料・個人向けのため）。
+
+## セキュリティについて
+
+- すべてのテーブルに Row Level Security を設定しており、**同じペアのメンバーだけ** がデータを読み書きできます
+- 1つのペアに参加できるのは二人まで、1人が参加できるペアは1つまでです
+- anon キーはブラウザに公開される前提のキーなので、フロントエンドに含めて問題ありません
+
+## 開発
+
+```bash
+npm run dev      # 開発サーバー
+npm run build    # 本番ビルド（dist/）
+npm run lint     # lint
+```
+
+構成: Vite + React + TypeScript / Supabase / react-leaflet
