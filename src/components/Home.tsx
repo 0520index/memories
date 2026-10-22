@@ -7,6 +7,7 @@ import PlaceCard from './PlaceCard'
 import PlaceForm from './PlaceForm'
 import MapView from './MapView'
 import Settings from './Settings'
+import TodayPick from './TodayPick'
 
 type Tab = 'want' | 'memories' | 'again' | 'map'
 type SortKey = 'new' | 'old' | 'rating' | 'name'
@@ -163,6 +164,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
   }
 
   const filtering = Boolean(query || tagFilter || categoryFilter)
+  const wantPlaces = useMemo(() => places.filter((place) => place.status === 'want'), [places])
 
   return (
     <div className="app">
@@ -231,6 +233,8 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
           )}
         </div>
       )}
+
+      {tab === 'want' && !loading && <TodayPick coupleId={couple.id} candidates={wantPlaces} onOpen={(place) => setEditing({ place })} onVisited={markVisited} />}
 
       <main className="content">
         {loading ? (
