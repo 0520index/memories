@@ -29,6 +29,7 @@ export default function PlaceCard({ place, onEdit, onVisited }: Props) {
           <Stars value={place.rating} />
         </div>
         {place.address && <div className="place-address">📍 {place.address}</div>}
+        {place.memo && <p className="place-memo">{place.memo}</p>}
         {place.tags.length > 0 && (
           <div className="chips">
             {place.tags.map((t) => (
