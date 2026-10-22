@@ -9,6 +9,7 @@ import MapView from './MapView'
 import Settings from './Settings'
 
 type Tab = 'want' | 'memories' | 'again' | 'map'
+type SortKey = 'new' | 'old' | 'rating' | 'name'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'want', label: 'やりたい' },
@@ -30,6 +31,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<Tab>('want')
   const [query, setQuery] = useState('')
+  const [sort, setSort] = useState<SortKey>('new')
   const [tagFilter, setTagFilter] = useState<string | null>(null)
   const [categoryFilter, setCategoryFilter] = useState<Category | null>(null)
   const [editing, setEditing] = useState<Editing | null>(null)
@@ -116,11 +118,8 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
         [p.title, p.memo, p.address, ...p.tags, ...p.links].some((s) => s?.toLowerCase().includes(q)),
       )
     }
-    if (tab === 'memories' || tab === 'again') {
-      list = [...list].sort((a, b) => (b.visited_on ?? '').localeCompare(a.visited_on ?? ''))
-    }
-    return list
-  }, [places, tab, query, tagFilter, categoryFilter])
+    return [...list].sort((a, b) => comparePlaces(a, b, sort))
+  }, [places, tab, query, tagFilter, categoryFilter, sort])
 
   const counts = useMemo(
     () => ({
@@ -193,6 +192,15 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
+          <label className="sort-field">
+            <span>並び替え</span>
+            <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} aria-label="並び替え">
+              <option value="new">新しい順</option>
+              <option value="old">古い順</option>
+              <option value="rating">評価が高い順</option>
+              <option value="name">名前順</option>
+            </select>
+          </label>
           <div className="chips">
             {CATEGORIES.map((c) => {
               const count = places.filter((p) => normalizeCategory(p.category) === c.id).length
@@ -275,6 +283,20 @@ function EmptyState({ tab, filtering }: { tab: Tab; filtering: boolean }) {
     again: '思い出で「またやりたい」をオンにするとここに並びます',
   }
   return <p className="empty">{text[tab as Exclude<Tab, 'map'>]}</p>
+}
+
+function recentStamp(place: Place) {
+  return place.visited_on ? `${place.visited_on}T12:00:00` : place.created_at
+}
+
+function comparePlaces(a: Place, b: Place, sort: SortKey) {
+  if (sort === 'name') return a.title.localeCompare(b.title, 'ja')
+  if (sort === 'rating') {
+    const byRating = (b.rating ?? -1) - (a.rating ?? -1)
+    if (byRating !== 0) return byRating
+  }
+  const byDate = recentStamp(b).localeCompare(recentStamp(a))
+  return sort === 'old' ? -byDate : byDate
 }
 
 function today() {

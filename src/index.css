@@ -530,6 +530,25 @@ code {
   overflow-x: hidden;
 }
 
+.sort-field {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.sort-field span {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.sort-field select {
+  width: auto;
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;
