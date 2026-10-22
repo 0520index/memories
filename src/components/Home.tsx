@@ -271,6 +271,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
         <Settings
           couple={couple}
           userId={userId}
+          places={places}
           onClose={() => setShowSettings(false)}
           onCoupleChange={onCoupleChange}
         />

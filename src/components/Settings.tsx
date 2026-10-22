@@ -1,17 +1,19 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
 import { APP_VERSION, forceReloadToLatest } from '../lib/update'
-import type { Couple, Member } from '../types'
+import { buildExport, downloadText, exportBasename, toCsv } from '../lib/exportData'
+import type { Couple, Member, Place } from '../types'
 import Modal from './Modal'
 
 type Props = {
   couple: Couple
   userId: string
+  places: Place[]
   onClose: () => void
   onCoupleChange: (c: Couple | null) => void
 }
 
-export default function Settings({ couple, userId, onClose, onCoupleChange }: Props) {
+export default function Settings({ couple, userId, places, onClose, onCoupleChange }: Props) {
   const [name, setName] = useState(couple.name)
   const [anniversary, setAnniversary] = useState(couple.anniversary ?? '')
   const [members, setMembers] = useState<Member[]>([])
@@ -42,6 +44,16 @@ export default function Settings({ couple, userId, onClose, onCoupleChange }: Pr
     if (error) return setError(error.message)
     onCoupleChange(data as Couple)
     onClose()
+  }
+
+  function exportAs(kind: 'json' | 'csv') {
+    const file = buildExport(couple, places)
+    const base = exportBasename(couple.name)
+    if (kind === 'json') {
+      downloadText(`${base}.json`, JSON.stringify(file, null, 2), 'application/json')
+      return
+    }
+    downloadText(`${base}.csv`, toCsv(file), 'text/csv;charset=utf-8')
   }
 
   async function copyCode() {
@@ -88,6 +100,21 @@ export default function Settings({ couple, userId, onClose, onCoupleChange }: Pr
             </div>
           </div>
         )}
+      </section>
+
+      <section className="settings-section">
+        <h3>書き出し</h3>
+        <p className="muted small-text">
+          いまの一覧（{places.length}件）をファイルに保存します。招待コードやログイン情報は含まれません。
+        </p>
+        <div className="row wrap">
+          <button type="button" className="secondary" onClick={() => exportAs('json')}>
+            JSON
+          </button>
+          <button type="button" className="secondary" onClick={() => exportAs('csv')}>
+            CSV（Excel）
+          </button>
+        </div>
       </section>
 
       <section className="settings-section">
