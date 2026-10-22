@@ -747,6 +747,8 @@ code {
   align-items: flex-end;
   justify-content: center;
   z-index: 1000;
+  touch-action: none;
+  overscroll-behavior: none;
 }
 
 .modal {
@@ -757,6 +759,9 @@ code {
   border-radius: 20px 20px 0 0;
   padding: 16px 20px calc(24px + env(safe-area-inset-bottom));
   animation: slide-up 0.2s ease-out;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 @media (min-width: 640px) {
