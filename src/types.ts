@@ -27,6 +27,7 @@ export type Place = {
   rating: number | null
   tags: string[]
   memo: string | null
+  links: string[]
   address: string | null
   lat: number | null
   lng: number | null

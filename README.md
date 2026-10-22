@@ -7,12 +7,12 @@
 
 - **種類で分類**: 場所 / 映画 / 本 / グルメ / その他（文言も「見たい」「読んだ」などに自動で切り替わる）
 - **やりたい / 思い出 / またやりたい** の3つのリスト（「行った！」「見た！」ボタンで思い出へ移動）
-- 日付・星評価（1〜5）・タグ・メモ・住所
+- 日付・星評価（1〜5）・タグ・メモ・リンク・住所
 - 地図表示（OpenStreetMap）と、店名・住所検索 or 地図タップでの位置指定（場所・グルメ向け）
 - 付き合った日からの日数、次の100日記念・周年までのカウント
 - 二人のスマホでリアルタイム同期（招待コードでペアを作成）
 - 検索・種類・タグでの絞り込み、ダークモード対応
-- メモに貼った URL（インスタなど）をタップして開ける
+- リンク欄の URL（インスタなど）を一覧からタップして開ける（メモ本文は一覧に出さない）
 
 ## 使っているサービス（すべて無料）
 
@@ -31,7 +31,7 @@
 
 1. https://supabase.com で無料アカウントを作成し、「New project」でプロジェクトを作成（リージョンは Tokyo 推奨）
 2. 左メニュー **SQL Editor** を開き、[`supabase/schema.sql`](supabase/schema.sql) の中身をすべて貼り付けて **Run**
-   - すでに一度セットアップ済みの場合は、代わりに [`supabase/migration_add_category.sql`](supabase/migration_add_category.sql) だけ実行すれば種類機能が追加されます
+   - すでに一度セットアップ済みの場合は、[`supabase/migration_add_category.sql`](supabase/migration_add_category.sql) と [`supabase/migration_add_links.sql`](supabase/migration_add_links.sql) を実行してください（未実行のものだけ）
 3. **Project Settings → API**（または「Connect」ボタン）から次の2つをコピー
    - Project URL
    - anon / publishable key（公開用のキー。`service_role` キーは使わないこと）
@@ -73,8 +73,8 @@ http://localhost:5173 を開きます。
 
 ### インスタのリンクを残す
 
-1. 場所を追加・編集し、メモ欄に Instagram の URL を貼る
-2. 保存後、一覧や編集画面の「🔗 …」をタップするとブラウザ／インスタで開きます
+1. 場所を追加・編集し、「リンク」欄に Instagram の URL を入れて追加する（メモとは別）
+2. 保存後、一覧の「🔗 …」をタップするとブラウザ／インスタで開きます
 
 ## セキュリティについて
 

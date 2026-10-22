@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import type { Place, PlaceInput } from '../types'
 import { CATEGORIES, DEFAULT_CATEGORY, getCategory } from '../lib/categories'
+import { normalizeUrl, placeLinks, shortenUrl } from '../lib/links'
 import Stars from './Stars'
 import LocationPicker from './LocationPicker'
 import LinkButtons from './LinkButtons'
@@ -24,6 +25,7 @@ const EMPTY: PlaceInput = {
   rating: null,
   tags: [],
   memo: null,
+  links: [],
   address: null,
   lat: null,
   lng: null,
@@ -32,6 +34,7 @@ const EMPTY: PlaceInput = {
 export default function PlaceForm({ place, preset, existingTags, onSave, onDelete, onClose }: Props) {
   const [form, setForm] = useState<PlaceInput>(() => ({ ...EMPTY, ...pick(place), ...preset }))
   const [tagDraft, setTagDraft] = useState('')
+  const [linkDraft, setLinkDraft] = useState('')
   const [showMap, setShowMap] = useState(form.lat != null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -46,15 +49,29 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
     setTagDraft('')
   }
 
+  function addLink(raw: string) {
+    const url = normalizeUrl(raw)
+    if (!url) {
+      if (raw.trim()) setError('リンクは https:// から始まるURLにしてください')
+      return
+    }
+    setError(null)
+    if (!form.links.includes(url)) set('links', [...form.links, url])
+    setLinkDraft('')
+  }
+
   async function submit(e: FormEvent) {
     e.preventDefault()
     setBusy(true)
     setError(null)
+    const pendingLink = normalizeUrl(linkDraft)
+    const links = pendingLink && !form.links.includes(pendingLink) ? [...form.links, pendingLink] : form.links
     const input: PlaceInput = {
       ...form,
       title: form.title.trim(),
       category: form.category || DEFAULT_CATEGORY,
       memo: form.memo?.trim() || null,
+      links,
       address: form.address?.trim() || null,
       tags: tagDraft.trim() ? [...new Set([...form.tags, tagDraft.trim().replace(/^#/, '')])] : form.tags,
       visited_on: form.status === 'visited' ? form.visited_on : null,
@@ -85,9 +102,6 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
   }
 
   const suggestions = existingTags.filter((t) => !form.tags.includes(t))
-  const memoPlaceholder = visited
-    ? `${cat.memoDone}\nインスタのリンクなどもここに貼れます`
-    : `${cat.memoWant}\nインスタのリンクなどもここに貼れます`
 
   return (
     <Modal title={place ? '編集' : '追加'} onClose={onClose}>
@@ -154,15 +168,52 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
         )}
 
         <label>
-          メモ・リンク
+          メモ
           <textarea
             rows={4}
             value={form.memo ?? ''}
             onChange={(e) => set('memo', e.target.value)}
-            placeholder={memoPlaceholder}
+            placeholder={visited ? cat.memoDone : cat.memoWant}
           />
         </label>
-        <LinkButtons texts={[form.memo]} />
+
+        <div className="field">
+          <span>リンク</span>
+          {form.links.length > 0 && (
+            <div className="chips">
+              {form.links.map((url) => (
+                <button
+                  key={url}
+                  type="button"
+                  className="chip active"
+                  onClick={() => set('links', form.links.filter((x) => x !== url))}
+                  aria-label={`${url} を外す`}
+                >
+                  {shortenUrl(url)} ×
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="row">
+            <input
+              type="url"
+              inputMode="url"
+              value={linkDraft}
+              onChange={(e) => setLinkDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  addLink(linkDraft)
+                }
+              }}
+              placeholder="https://www.instagram.com/..."
+            />
+            <button type="button" className="secondary" onClick={() => addLink(linkDraft)}>
+              追加
+            </button>
+          </div>
+          <LinkButtons urls={form.links} className="in-form" />
+        </div>
 
         <div className="field">
           <span>タグ</span>
@@ -264,6 +315,7 @@ function pick(place: Place | null): Partial<PlaceInput> {
     rating,
     tags,
     memo,
+    links: placeLinks(place),
     address,
     lat,
     lng,

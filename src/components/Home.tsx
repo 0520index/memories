@@ -36,7 +36,12 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
   const [showSettings, setShowSettings] = useState(false)
 
   const upsertLocal = useCallback((p: Place) => {
-    const normalized = { ...p, category: normalizeCategory(p.category) }
+    const normalized = {
+      ...p,
+      category: normalizeCategory(p.category),
+      links: Array.isArray(p.links) ? p.links : [],
+      tags: p.tags ?? [],
+    }
     setPlaces((prev) => {
       const i = prev.findIndex((x) => x.id === normalized.id)
       if (i === -1) return [normalized, ...prev]
@@ -62,6 +67,8 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
         const list = ((data as Place[]) ?? []).map((p) => ({
           ...p,
           category: normalizeCategory(p.category),
+          links: Array.isArray(p.links) ? p.links : [],
+          tags: p.tags ?? [],
         }))
         setPlaces(list)
         setLoading(false)
@@ -106,7 +113,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
     if (tagFilter) list = list.filter((p) => p.tags.includes(tagFilter))
     if (q) {
       list = list.filter((p) =>
-        [p.title, p.memo, p.address, ...p.tags].some((s) => s?.toLowerCase().includes(q)),
+        [p.title, p.memo, p.address, ...p.tags, ...p.links].some((s) => s?.toLowerCase().includes(q)),
       )
     }
     if (tab === 'memories' || tab === 'again') {

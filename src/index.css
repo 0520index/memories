@@ -381,9 +381,9 @@ code {
   transform: scale(0.98);
 }
 
-.form .link-buttons {
+.form .link-buttons,
+.link-buttons.in-form {
   padding: 0;
-  margin-top: -8px;
 }
 
 .results button.selected {

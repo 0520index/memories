@@ -30,6 +30,7 @@ create table if not exists public.places (
   rating smallint check (rating between 1 and 5),
   tags text[] not null default '{}',
   memo text,
+  links text[] not null default '{}',
   address text,
   lat double precision,
   lng double precision,

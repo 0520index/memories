@@ -1,12 +1,11 @@
-import { extractUrls, shortenUrl } from '../lib/links'
+import { shortenUrl } from '../lib/links'
 
 type Props = {
-  texts: (string | null | undefined)[]
+  urls: string[]
   className?: string
 }
 
-export default function LinkButtons({ texts, className }: Props) {
-  const urls = extractUrls(...texts)
+export default function LinkButtons({ urls, className }: Props) {
   if (urls.length === 0) return null
 
   return (
