@@ -34,6 +34,8 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
   const [query, setQuery] = useState('')
   const [sort, setSort] = useState<SortKey>('new')
   const [tagFilter, setTagFilter] = useState<string | null>(null)
+  const [showAllTags, setShowAllTags] = useState(false)
+  const [tagQuery, setTagQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<Category | null>(null)
   const [editing, setEditing] = useState<Editing | null>(null)
   const [showSettings, setShowSettings] = useState(false)
@@ -95,11 +97,23 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
     }
   }, [couple.id, upsertLocal, removeLocal])
 
-  const allTags = useMemo(() => {
-    const set = new Set<string>()
-    places.forEach((p) => p.tags.forEach((t) => set.add(t)))
-    return [...set].sort()
+  const tagCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    places.forEach((place) => {
+      place.tags.forEach((tag) => counts.set(tag, (counts.get(tag) ?? 0) + 1))
+    })
+    return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ja'))
   }, [places])
+
+  const allTags = useMemo(
+    () => [...tagCounts.map(([tag]) => tag)].sort((a, b) => a.localeCompare(b, 'ja')),
+    [tagCounts],
+  )
+
+  const popularTags = tagCounts.slice(0, 8).map(([tag]) => tag)
+  const shortcutTags =
+    tagFilter && !popularTags.includes(tagFilter) ? [tagFilter, ...popularTags] : popularTags
+  const matchedTags = tagCounts.filter(([tag]) => tag.toLowerCase().includes(tagQuery.trim().toLowerCase()))
 
   const usedCategories = useMemo(() => {
     const set = new Set(places.map((p) => normalizeCategory(p.category)))
@@ -218,17 +232,54 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
               )
             })}
           </div>
-          {allTags.length > 0 && (
+          {tagCounts.length > 0 && (
             <div className="chips">
-              {allTags.map((t) => (
+              {shortcutTags.map((tag) => (
                 <button
-                  key={t}
-                  className={`chip ${tagFilter === t ? 'active' : ''}`}
-                  onClick={() => setTagFilter(tagFilter === t ? null : t)}
+                  key={tag}
+                  className={`chip ${tagFilter === tag ? 'active' : ''}`}
+                  onClick={() => setTagFilter(tagFilter === tag ? null : tag)}
                 >
-                  #{t}
+                  #{tag}
                 </button>
               ))}
+              {tagCounts.length > popularTags.length && (
+                <button
+                  type="button"
+                  className={`chip ${showAllTags ? 'active' : ''}`}
+                  onClick={() => setShowAllTags((open) => !open)}
+                >
+                  すべてのタグ
+                </button>
+              )}
+            </div>
+          )}
+          {showAllTags && (
+            <div className="tag-browser">
+              <input
+                type="search"
+                placeholder="タグを検索"
+                value={tagQuery}
+                onChange={(e) => setTagQuery(e.target.value)}
+                aria-label="タグを検索"
+              />
+              {matchedTags.length === 0 ? (
+                <p className="muted small-text">一致するタグがありません</p>
+              ) : (
+                <div className="chips">
+                  {matchedTags.map(([tag, count]) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      className={`chip ${tagFilter === tag ? 'active' : ''}`}
+                      onClick={() => setTagFilter(tagFilter === tag ? null : tag)}
+                    >
+                      #{tag}
+                      <span className="tag-count">{count}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
