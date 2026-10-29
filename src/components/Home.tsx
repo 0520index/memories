@@ -175,12 +175,15 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
 
   return (
     <div className="app">
-      <header className="home-head">
+      <header className={`home-head ${tab === 'memories' ? 'is-hero' : ''}`}>
         {tab === 'memories' ? (
-          <>
-            <p className="wordmark">Memories</p>
-            <p className="tagline">ふたりの思い出を、地図に。</p>
-          </>
+          <div className="home-hero">
+            <img src="/hero.jpg" alt="" />
+            <div className="home-hero-copy">
+              <p className="wordmark">Memories</p>
+              <p className="tagline">ふたりの思い出を、地図に。</p>
+            </div>
+          </div>
         ) : (
           <h1 className="page-title">
             {tab === 'map' ? 'Map' : tab === 'again' ? 'Again' : 'Want'}
