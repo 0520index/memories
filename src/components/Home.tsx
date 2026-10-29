@@ -10,6 +10,7 @@ import PlaceCard from './PlaceCard'
 import PlaceForm from './PlaceForm'
 import MapView from './MapView'
 import Settings from './Settings'
+import ScrollRail from './ScrollRail'
 import TodayPick from './TodayPick'
 
 type Tab = 'want' | 'memories' | 'again' | 'map'
@@ -263,6 +264,37 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
   }
 
   const filtering = Boolean(query || tagFilter || categoryFilter || (tab === 'memories' && yearFilter))
+
+  const categoryFilters = (
+    <div className="filter-group">
+      <span className="filter-label">Category</span>
+      <div className="chips">
+        <button
+          type="button"
+          className={`category-chip ${categoryFilter === null ? 'active' : ''}`}
+          onClick={() => setCategoryFilter(null)}
+        >
+          All
+        </button>
+        {CATEGORIES.map((c) => {
+          const count = places.filter((p) => normalizeCategory(p.category) === c.id).length
+          if (count === 0 && usedCategories.length > 0 && categoryFilter !== c.id) return null
+          return (
+            <button
+              key={c.id}
+              className={`category-chip ${categoryFilter === c.id ? 'active' : ''}`}
+              onClick={() => setCategoryFilter(categoryFilter === c.id ? null : c.id)}
+            >
+              <span className="category-icon" aria-hidden="true">
+                {c.icon}
+              </span>
+              {c.label}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
   const wantPlaces = useMemo(() => places.filter((place) => place.status === 'want'), [places])
 
   return (
@@ -357,32 +389,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
               </div>
             </div>
           )}
-          <div className="filter-group">
-            <span className="filter-label">Category</span>
-            <div className="chips">
-              <button
-                type="button"
-                className={`category-chip ${categoryFilter === null ? 'active' : ''}`}
-                onClick={() => setCategoryFilter(null)}
-              >
-                All
-              </button>
-              {CATEGORIES.map((c) => {
-                const count = places.filter((p) => normalizeCategory(p.category) === c.id).length
-                if (count === 0 && usedCategories.length > 0 && categoryFilter !== c.id) return null
-                return (
-                  <button
-                    key={c.id}
-                    className={`category-chip ${categoryFilter === c.id ? 'active' : ''}`}
-                    onClick={() => setCategoryFilter(categoryFilter === c.id ? null : c.id)}
-                  >
-                    <span className="category-icon" aria-hidden="true">{c.icon}</span>
-                    {c.label}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
+          {categoryFilters}
           {tagCounts.length > 0 && (
             <div className="filter-group">
               <span className="filter-label">Tags</span>
@@ -458,11 +465,12 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
         ) : filtered.length === 0 ? (
           <EmptyState tab={tab} filtering={filtering} />
         ) : (
-          <ul className="list">
+          <ul className={`list ${tab === 'want' ? 'compact' : ''}`}>
             {filtered.map((p) => (
               <PlaceCard
                 key={p.id}
                 place={p}
+                compact={tab === 'want'}
                 authorName={authorName(p.created_by)}
                 onEdit={() => setEditing({ place: p })}
                 onVisited={() => markVisited(p)}
@@ -471,6 +479,8 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
           </ul>
         )}
       </main>
+
+      <ScrollRail />
 
       <nav className="bottom-nav">
         <button type="button" className={tab === 'memories' ? 'active' : ''} onClick={() => setTab('memories')}>

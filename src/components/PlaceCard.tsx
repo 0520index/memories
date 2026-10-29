@@ -9,13 +9,45 @@ import LinkButtons from './LinkButtons'
 type Props = {
   place: Place
   authorName?: string | null
+  compact?: boolean
   onEdit: () => void
   onVisited: () => void
 }
 
-export default function PlaceCard({ place, authorName, onEdit, onVisited }: Props) {
+export default function PlaceCard({ place, authorName, compact, onEdit, onVisited }: Props) {
   const cat = getCategory(place.category)
   const againLevel = againLevelOf(place)
+
+  if (compact) {
+    const links = placeLinks(place)
+    const hasMeta = place.tags.length > 0 || links.length > 0
+    return (
+      <li className={`want-row cat-${cat.id}`}>
+        <div className="want-row-top">
+          <button type="button" className="want-row-main" onClick={onEdit}>
+            <span className="pin-dot" aria-hidden="true" />
+            <span className="want-copy">
+              <span className="place-title">{place.title}</span>
+              {place.address && <span className="want-area">{place.address}</span>}
+            </span>
+          </button>
+          <button type="button" className="want-done" onClick={onVisited}>
+            {cat.markDone}
+          </button>
+        </div>
+        {hasMeta && (
+          <div className="want-meta">
+            {place.tags.map((tag) => (
+              <span key={tag} className="tag-chip">
+                #{tag}
+              </span>
+            ))}
+            <LinkButtons urls={links} className="in-row" />
+          </div>
+        )}
+      </li>
+    )
+  }
 
   return (
     <li className={`place-card ${place.status} cat-${cat.id}`}>
