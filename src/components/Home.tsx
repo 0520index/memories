@@ -319,13 +319,6 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
           <NavIcon d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" />
           Home
         </button>
-        <button type="button" className={tab === 'map' ? 'active' : ''} onClick={() => setTab('map')}>
-          <NavIcon d="M9 18 3 20V6l6-2 6 2 6-2v14l-6 2-6-2zM9 4v14M15 6v14" />
-          Map
-        </button>
-        <button type="button" className="nav-add" onClick={openNew} aria-label="追加">
-          ＋
-        </button>
         <button
           type="button"
           className={tab === 'want' || tab === 'again' ? 'active' : ''}
@@ -333,6 +326,13 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
         >
           <NavIcon d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z" />
           Want
+        </button>
+        <button type="button" className="nav-add" onClick={openNew} aria-label="追加">
+          ＋
+        </button>
+        <button type="button" className={tab === 'map' ? 'active' : ''} onClick={() => setTab('map')}>
+          <NavIcon d="M9 18 3 20V6l6-2 6 2 6-2v14l-6 2-6-2zM9 4v14M15 6v14" />
+          Map
         </button>
         <button type="button" onClick={() => setShowSettings(true)}>
           <NavIcon d="M12 12a3.2 3.2 0 1 0 0-6.4A3.2 3.2 0 0 0 12 12zM5 19.2c.8-2.8 3.5-4.4 7-4.4s6.2 1.6 7 4.4" />
