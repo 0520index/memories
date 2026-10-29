@@ -118,7 +118,6 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
     const q = query.trim().toLowerCase()
     let list = places
     if (tab === 'want') list = list.filter((p) => p.status === 'want')
-    if (tab === 'memories') list = list.filter((p) => p.status === 'visited')
     if (tab === 'again') list = list.filter((p) => p.status === 'visited' && p.want_again)
     if (categoryFilter) list = list.filter((p) => normalizeCategory(p.category) === categoryFilter)
     if (tagFilter) list = list.filter((p) => p.tags.includes(tagFilter))
@@ -383,7 +382,7 @@ function EmptyState({ tab, filtering }: { tab: Tab; filtering: boolean }) {
   if (filtering) return <p className="empty">条件に合う項目がありません</p>
   const text: Record<Exclude<Tab, 'map'>, string> = {
     want: '行きたい場所や見たい映画を ＋ から追加しよう',
-    memories: '二人で行った場所・見た映画を記録しよう',
+    memories: '行きたいことも、行った思い出も、＋ から追加しよう',
     again: '思い出で「Want again」をオンにするとここに並びます',
   }
   return <p className="empty">{text[tab as Exclude<Tab, 'map'>]}</p>
