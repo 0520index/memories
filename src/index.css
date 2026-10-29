@@ -404,19 +404,19 @@ code {
 }
 
 .place-card.cat-movie {
-  border-left-color: #7c6ad4;
+  --cat: #8b7cc8;
 }
 
 .place-card.cat-book {
-  border-left-color: #3d8bfd;
+  --cat: #6a93c4;
 }
 
 .place-card.cat-food {
-  border-left-color: #2aa7a1;
+  --cat: #d4896a;
 }
 
 .place-card.cat-other {
-  border-left-color: #e06bb3;
+  --cat: #c48aa8;
 }
 
 .update-banner {
@@ -554,18 +554,16 @@ code {
 }
 
 .pin-dot {
-  width: 12px;
-  height: 12px;
-  margin-top: 6px;
-  border-radius: 50%;
-  background: var(--again);
+  width: 28px;
+  height: 28px;
+  margin-top: 1px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--again) 18%, transparent);
-}
-
-.place-card.want .pin-dot {
-  background: var(--want);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--want) 18%, transparent);
+  font-size: 0.95rem;
+  line-height: 1;
+  background: color-mix(in srgb, var(--cat) 18%, var(--surface));
 }
 
 .heart-mark {
@@ -812,6 +810,7 @@ code {
 }
 
 .place-card {
+  --cat: #b08968;
   background: var(--surface);
   border-radius: var(--radius);
   border: 1px solid var(--border);

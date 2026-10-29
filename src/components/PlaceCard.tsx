@@ -25,7 +25,9 @@ export default function PlaceCard({ place, onEdit, onVisited }: Props) {
           </span>
         </div>
         <div className="memory-main">
-          <span className="pin-dot" aria-hidden="true" />
+          <span className="pin-dot" aria-hidden="true">
+            {cat.icon}
+          </span>
           <div>
             <div className="place-title">{place.title}</div>
             {place.address && <div className="place-address">{place.address}</div>}
