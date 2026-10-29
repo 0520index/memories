@@ -8,11 +8,12 @@ import LinkButtons from './LinkButtons'
 
 type Props = {
   place: Place
+  authorName?: string | null
   onEdit: () => void
   onVisited: () => void
 }
 
-export default function PlaceCard({ place, onEdit, onVisited }: Props) {
+export default function PlaceCard({ place, authorName, onEdit, onVisited }: Props) {
   const cat = getCategory(place.category)
   const againLevel = againLevelOf(place)
 
@@ -21,6 +22,7 @@ export default function PlaceCard({ place, onEdit, onVisited }: Props) {
       <button className="place-body" onClick={onEdit}>
         <div className="memory-top">
           <span>{place.visited_on ? formatDate(place.visited_on) : cat.want}</span>
+          {authorName && <span className="author-name">{authorName}</span>}
         </div>
         <div className="memory-main">
           <span className="pin-dot" aria-hidden="true" />

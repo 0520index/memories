@@ -571,8 +571,36 @@ code {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   color: var(--muted);
   font-size: 0.78rem;
+}
+
+.author-name {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.partner-news {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+.partner-news button {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .memory-main {
@@ -1187,6 +1215,25 @@ code {
   font-size: 0.75rem;
   color: var(--muted);
   white-space: nowrap;
+}
+
+.legend button {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  padding: 2px 4px;
+  border-radius: 999px;
+}
+
+.legend button.active {
+  color: var(--text);
+  background: var(--primary-soft);
+}
+
+.legend button.dim {
+  opacity: 0.4;
 }
 
 .dot {

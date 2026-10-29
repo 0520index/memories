@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { AGAIN_LEVELS, againLevelOf, type AgainLevel } from '../lib/again'
 import { CATEGORIES, DEFAULT_CATEGORY, normalizeCategory, type Category } from '../lib/categories'
-import type { Couple, Place, PlaceInput } from '../types'
+import { placeYear } from '../lib/date'
+import { additionMessage, markSeen, partnerAdditions, readSeen } from '../lib/partnerNews'
+import type { Couple, Member, Place, PlaceInput } from '../types'
 import AnniversaryBanner from './AnniversaryBanner'
 import PlaceCard from './PlaceCard'
 import PlaceForm from './PlaceForm'
@@ -33,6 +35,11 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
   const [tagQuery, setTagQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<Category | null>(null)
   const [againFilter, setAgainFilter] = useState<Exclude<AgainLevel, 0> | null>(null)
+  const [yearFilter, setYearFilter] = useState<number | null>(null)
+  const [members, setMembers] = useState<Member[] | null>(null)
+  const [partnerNews, setPartnerNews] = useState<string | null>(null)
+  const newsChecked = useRef(false)
+  const openedAt = useRef(new Date().toISOString())
   const [editing, setEditing] = useState<Editing | null>(null)
   const [showSettings, setShowSettings] = useState(false)
 
@@ -101,6 +108,36 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
     }
   }, [couple.id, upsertLocal, removeLocal])
 
+  useEffect(() => {
+    let active = true
+    supabase
+      .from('couple_members')
+      .select('couple_id, user_id, display_name')
+      .eq('couple_id', couple.id)
+      .then(({ data }) => {
+        if (active) setMembers((data as Member[]) ?? [])
+      })
+    return () => {
+      active = false
+    }
+  }, [couple.id])
+
+  useEffect(() => {
+    if (loading || members === null || newsChecked.current) return
+    newsChecked.current = true
+    const seen = readSeen(couple.id, userId)
+    if (!seen) {
+      markSeen(couple.id, userId, openedAt.current)
+      return
+    }
+    const added = partnerAdditions(places, userId, seen)
+    if (added.length === 0) {
+      markSeen(couple.id, userId, openedAt.current)
+      return
+    }
+    setPartnerNews(additionMessage(added, members))
+  }, [loading, members, places, couple.id, userId])
+
   const tagCounts = useMemo(() => {
     const counts = new Map<string, number>()
     places.forEach((place) => {
@@ -132,6 +169,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
       list = list.filter((p) => p.status === 'visited' && againLevelOf(p) > 0)
       if (againFilter) list = list.filter((p) => againLevelOf(p) === againFilter)
     }
+    if (tab === 'memories' && yearFilter) list = list.filter((p) => placeYear(p) === yearFilter)
     if (categoryFilter) list = list.filter((p) => normalizeCategory(p.category) === categoryFilter)
     if (tagFilter) list = list.filter((p) => p.tags.includes(tagFilter))
     if (q) {
@@ -146,7 +184,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
       }
       return comparePlaces(a, b, sort)
     })
-  }, [places, tab, query, tagFilter, categoryFilter, sort, againFilter])
+  }, [places, tab, query, tagFilter, categoryFilter, sort, againFilter, yearFilter])
 
   const counts = useMemo(
     () => ({
@@ -201,7 +239,30 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
     setEditing({ place, preset: { status: 'visited', visited_on: today() } })
   }
 
-  const filtering = Boolean(query || tagFilter || categoryFilter)
+  const years = useMemo(() => {
+    const set = new Set<number>()
+    places.forEach((place) => {
+      const year = placeYear(place)
+      if (year) set.add(year)
+    })
+    return [...set].sort((a, b) => b - a)
+  }, [places])
+
+  const authorName = useCallback(
+    (createdBy: string | null) => {
+      if (!createdBy || !members) return null
+      const member = members.find((item) => item.user_id === createdBy)
+      return member?.display_name?.trim() || (createdBy === userId ? 'あなた' : '相手')
+    },
+    [members, userId],
+  )
+
+  function dismissNews() {
+    markSeen(couple.id, userId, openedAt.current)
+    setPartnerNews(null)
+  }
+
+  const filtering = Boolean(query || tagFilter || categoryFilter || (tab === 'memories' && yearFilter))
   const wantPlaces = useMemo(() => places.filter((place) => place.status === 'want'), [places])
 
   return (
@@ -272,6 +333,30 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
               <option value="name">Name</option>
             </select>
           </label>
+          {tab === 'memories' && years.length > 0 && (
+            <div className="filter-group">
+              <span className="filter-label">Year</span>
+              <div className="chips">
+                <button
+                  type="button"
+                  className={`tag-chip ${yearFilter === null ? 'active' : ''}`}
+                  onClick={() => setYearFilter(null)}
+                >
+                  All
+                </button>
+                {years.map((year) => (
+                  <button
+                    key={year}
+                    type="button"
+                    className={`tag-chip ${yearFilter === year ? 'active' : ''}`}
+                    onClick={() => setYearFilter(yearFilter === year ? null : year)}
+                  >
+                    {year}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="filter-group">
             <span className="filter-label">Category</span>
             <div className="chips">
@@ -354,6 +439,15 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
         </div>
       )}
 
+      {partnerNews && (
+        <p className="partner-news">
+          <span>{partnerNews}</span>
+          <button type="button" onClick={dismissNews}>
+            閉じる
+          </button>
+        </p>
+      )}
+
       {tab === 'want' && !loading && <TodayPick coupleId={couple.id} candidates={wantPlaces} onOpen={(place) => setEditing({ place })} onVisited={markVisited} />}
 
       <main className="content">
@@ -366,7 +460,13 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
         ) : (
           <ul className="list">
             {filtered.map((p) => (
-              <PlaceCard key={p.id} place={p} onEdit={() => setEditing({ place: p })} onVisited={() => markVisited(p)} />
+              <PlaceCard
+                key={p.id}
+                place={p}
+                authorName={authorName(p.created_by)}
+                onEdit={() => setEditing({ place: p })}
+                onVisited={() => markVisited(p)}
+              />
             ))}
           </ul>
         )}

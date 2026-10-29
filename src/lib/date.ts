@@ -32,6 +32,12 @@ export function nextMilestones(anniversary: string, today = new Date()) {
   return { next100, daysTo100, years, daysToAnniv }
 }
 
+export function placeYear(place: { visited_on: string | null; created_at: string }) {
+  const source = place.visited_on || place.created_at
+  const year = Number(source.slice(0, 4))
+  return Number.isFinite(year) ? year : null
+}
+
 export function formatDate(iso: string | null) {
   if (!iso) return ''
   const d = parseDate(iso)
