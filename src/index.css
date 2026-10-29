@@ -591,10 +591,61 @@ code {
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--cat) 24%, transparent);
 }
 
-.heart-mark {
+.again-mark {
   margin-left: auto;
-  color: var(--again);
-  font-size: 1.1rem;
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--pin-again) 70%, var(--muted));
+}
+
+.again-mark.level-2 {
+  color: var(--pin-again);
+}
+
+.again-mark.level-3 {
+  color: #c45c4a;
+}
+
+.again-levels {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.field .again-levels {
+  margin-top: 0;
+}
+
+.again-levels button {
+  flex: 1;
+  padding: 8px 4px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.again-levels button small {
+  display: block;
+  margin-top: 1px;
+  font-size: 0.66rem;
+  font-weight: 500;
+}
+
+.again-levels button.active {
+  border-color: var(--pin-again);
+  background: color-mix(in srgb, var(--pin-again) 16%, var(--surface));
+  color: var(--text);
+}
+
+.again-levels button.level-3.active {
+  border-color: #c45c4a;
+  background: color-mix(in srgb, #e08aa4 24%, var(--surface));
 }
 
 /* anniversary */

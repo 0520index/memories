@@ -1,3 +1,4 @@
+import type { AgainLevel } from './lib/again'
 import type { Category } from './lib/categories'
 
 export type Couple = {
@@ -23,6 +24,7 @@ export type Place = {
   category: Category
   status: PlaceStatus
   want_again: boolean
+  again_level: AgainLevel
   visited_on: string | null
   rating: number | null
   tags: string[]

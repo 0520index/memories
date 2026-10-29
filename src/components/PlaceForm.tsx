@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import type { Place, PlaceInput } from '../types'
+import { AGAIN_LEVELS, type AgainLevel } from '../lib/again'
 import { CATEGORIES, DEFAULT_CATEGORY, getCategory } from '../lib/categories'
 import { normalizeUrl, placeLinks, shortenUrl } from '../lib/links'
 import Stars from './Stars'
@@ -21,6 +22,7 @@ const EMPTY: PlaceInput = {
   category: DEFAULT_CATEGORY,
   status: 'want',
   want_again: false,
+  again_level: 0,
   visited_on: null,
   rating: null,
   tags: [],
@@ -76,7 +78,8 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
       tags: tagDraft.trim() ? [...new Set([...form.tags, tagDraft.trim().replace(/^#/, '')])] : form.tags,
       visited_on: form.status === 'visited' ? form.visited_on : null,
       rating: form.status === 'visited' ? form.rating : null,
-      want_again: form.status === 'visited' ? form.want_again : false,
+      again_level: form.status === 'visited' ? form.again_level : 0,
+      want_again: form.status === 'visited' ? form.again_level > 0 : false,
     }
     if (!cat.showLocation) {
       input.lat = null
@@ -160,10 +163,22 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
               <span>Rating</span>
               <Stars value={form.rating} onChange={(v) => set('rating', v)} />
             </div>
-            <label className="toggle">
-              <input type="checkbox" checked={form.want_again} onChange={(e) => set('want_again', e.target.checked)} />
-              {cat.again}
-            </label>
+            <div className="field">
+              <span>Again</span>
+              <div className="again-levels">
+                {AGAIN_LEVELS.map((item) => (
+                  <button
+                    key={item.level}
+                    type="button"
+                    className={`level-${item.level} ${form.again_level === item.level ? 'active' : ''}`}
+                    onClick={() => set('again_level', form.again_level === item.level ? 0 : item.level)}
+                  >
+                    {item.label}
+                    <small>{item.hint}</small>
+                  </button>
+                ))}
+              </div>
+            </div>
           </>
         )}
 
@@ -305,12 +320,13 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
 
 function pick(place: Place | null): Partial<PlaceInput> {
   if (!place) return {}
-  const { title, category, status, want_again, visited_on, rating, tags, memo, address, lat, lng } = place
+  const { title, category, status, want_again, again_level, visited_on, rating, tags, memo, address, lat, lng } = place
   return {
     title,
     category: category || DEFAULT_CATEGORY,
     status,
     want_again,
+    again_level: (again_level || (want_again ? 2 : 0)) as AgainLevel,
     visited_on,
     rating,
     tags,

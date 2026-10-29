@@ -26,6 +26,7 @@ create table if not exists public.places (
   category text not null default 'place' check (category in ('place', 'movie', 'book', 'food', 'other')),
   status text not null default 'want' check (status in ('want', 'visited')),
   want_again boolean not null default false,
+  again_level smallint not null default 0 check (again_level between 0 and 3),
   visited_on date,
   rating smallint check (rating between 1 and 5),
   tags text[] not null default '{}',

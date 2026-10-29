@@ -1,3 +1,4 @@
+import { againLabel, againLevelOf } from '../lib/again'
 import { formatDate } from '../lib/date'
 import { getCategory } from '../lib/categories'
 import { placeLinks } from '../lib/links'
@@ -13,6 +14,7 @@ type Props = {
 
 export default function PlaceCard({ place, onEdit, onVisited }: Props) {
   const cat = getCategory(place.category)
+  const againLevel = againLevelOf(place)
 
   return (
     <li className={`place-card ${place.status} cat-${cat.id}`}>
@@ -28,7 +30,7 @@ export default function PlaceCard({ place, onEdit, onVisited }: Props) {
             {place.memo && <p className="place-memo">{place.memo}</p>}
             <Stars value={place.rating} />
           </div>
-          {place.want_again && <span className="heart-mark">♡</span>}
+          {againLevel > 0 && <span className={`again-mark level-${againLevel}`}>{againLabel(againLevel)}</span>}
         </div>
         {place.tags.length > 0 && (
           <div className="chips">

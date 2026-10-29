@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { AGAIN_LEVELS, againLevelOf, type AgainLevel } from '../lib/again'
 import { CATEGORIES, DEFAULT_CATEGORY, normalizeCategory, type Category } from '../lib/categories'
 import type { Couple, Place, PlaceInput } from '../types'
 import AnniversaryBanner from './AnniversaryBanner'
@@ -31,15 +32,19 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
   const [showAllTags, setShowAllTags] = useState(false)
   const [tagQuery, setTagQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<Category | null>(null)
+  const [againFilter, setAgainFilter] = useState<Exclude<AgainLevel, 0> | null>(null)
   const [editing, setEditing] = useState<Editing | null>(null)
   const [showSettings, setShowSettings] = useState(false)
 
   const upsertLocal = useCallback((p: Place) => {
+    const again_level = againLevelOf(p)
     const normalized = {
       ...p,
       category: normalizeCategory(p.category),
       links: Array.isArray(p.links) ? p.links : [],
       tags: p.tags ?? [],
+      again_level,
+      want_again: again_level > 0,
     }
     setPlaces((prev) => {
       const i = prev.findIndex((x) => x.id === normalized.id)
@@ -63,12 +68,17 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
       .order('created_at', { ascending: false })
       .then(({ data }) => {
         if (!active) return
-        const list = ((data as Place[]) ?? []).map((p) => ({
-          ...p,
-          category: normalizeCategory(p.category),
-          links: Array.isArray(p.links) ? p.links : [],
-          tags: p.tags ?? [],
-        }))
+        const list = ((data as Place[]) ?? []).map((p) => {
+          const again_level = againLevelOf(p)
+          return {
+            ...p,
+            category: normalizeCategory(p.category),
+            links: Array.isArray(p.links) ? p.links : [],
+            tags: p.tags ?? [],
+            again_level,
+            want_again: again_level > 0,
+          }
+        })
         setPlaces(list)
         setLoading(false)
       })
@@ -118,7 +128,10 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
     const q = query.trim().toLowerCase()
     let list = places
     if (tab === 'want') list = list.filter((p) => p.status === 'want')
-    if (tab === 'again') list = list.filter((p) => p.status === 'visited' && p.want_again)
+    if (tab === 'again') {
+      list = list.filter((p) => p.status === 'visited' && againLevelOf(p) > 0)
+      if (againFilter) list = list.filter((p) => againLevelOf(p) === againFilter)
+    }
     if (categoryFilter) list = list.filter((p) => normalizeCategory(p.category) === categoryFilter)
     if (tagFilter) list = list.filter((p) => p.tags.includes(tagFilter))
     if (q) {
@@ -126,14 +139,20 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
         [p.title, p.memo, p.address, ...p.tags, ...p.links].some((s) => s?.toLowerCase().includes(q)),
       )
     }
-    return [...list].sort((a, b) => comparePlaces(a, b, sort))
-  }, [places, tab, query, tagFilter, categoryFilter, sort])
+    return [...list].sort((a, b) => {
+      if (tab === 'again' && sort === 'new') {
+        const byLevel = againLevelOf(b) - againLevelOf(a)
+        if (byLevel !== 0) return byLevel
+      }
+      return comparePlaces(a, b, sort)
+    })
+  }, [places, tab, query, tagFilter, categoryFilter, sort, againFilter])
 
   const counts = useMemo(
     () => ({
       want: places.filter((p) => p.status === 'want').length,
       memories: places.filter((p) => p.status === 'visited').length,
-      again: places.filter((p) => p.status === 'visited' && p.want_again).length,
+      again: places.filter((p) => p.status === 'visited' && againLevelOf(p) > 0).length,
       map: places.filter((p) => p.lat != null).length,
     }),
     [places],
@@ -144,7 +163,14 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
       ? supabase.from('places').update(input).eq('id', id)
       : supabase.from('places').insert({ ...input, couple_id: couple.id })
     const { data, error } = await query.select().single()
-    if (error) throw new Error(error.message)
+    if (error) {
+      const missingLevel = /again_level/.test(error.message)
+      throw new Error(
+        missingLevel
+          ? '段階を保存するには、Supabase の SQL Editor で migration_add_again_level.sql を一度実行してください'
+          : error.message,
+      )
+    }
     upsertLocal(data as Place)
     setEditing(null)
   }
@@ -160,7 +186,12 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
     const preset: Partial<PlaceInput> = {
       category: categoryFilter ?? DEFAULT_CATEGORY,
       ...(tab === 'memories' || tab === 'again'
-        ? { status: 'visited' as const, want_again: tab === 'again', visited_on: today() }
+        ? {
+            status: 'visited' as const,
+            want_again: tab === 'again',
+            again_level: tab === 'again' ? 2 : 0,
+            visited_on: today(),
+          }
         : { status: 'want' as const }),
     }
     setEditing({ place: null, preset })
@@ -202,6 +233,24 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
               Again
               <span className="count">{counts.again}</span>
             </button>
+          </div>
+        )}
+        {tab === 'again' && (
+          <div className="again-levels">
+            <button type="button" className={againFilter === null ? 'active' : ''} onClick={() => setAgainFilter(null)}>
+              All
+            </button>
+            {[...AGAIN_LEVELS].reverse().map((item) => (
+              <button
+                key={item.level}
+                type="button"
+                className={`level-${item.level} ${againFilter === item.level ? 'active' : ''}`}
+                onClick={() => setAgainFilter(againFilter === item.level ? null : item.level)}
+              >
+                {item.label}
+                <small>{item.hint}</small>
+              </button>
+            ))}
           </div>
         )}
       </header>
@@ -386,7 +435,7 @@ function EmptyState({ tab, filtering }: { tab: Tab; filtering: boolean }) {
   const text: Record<Exclude<Tab, 'map'>, string> = {
     want: '行きたい場所や見たい映画を ＋ から追加しよう',
     memories: '行きたいことも、行った思い出も、＋ から追加しよう',
-    again: '思い出で「Want again」をオンにするとここに並びます',
+    again: '思い出で Maybe・Again・Soon を選ぶとここに並びます',
   }
   return <p className="empty">{text[tab as Exclude<Tab, 'map'>]}</p>
 }

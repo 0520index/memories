@@ -1,3 +1,4 @@
+import { againLabel, againLevelOf } from './again'
 import { getCategory } from './categories'
 import type { Couple, Place } from '../types'
 
@@ -16,6 +17,7 @@ type ExportPlace = {
   category: string
   status: string
   want_again: boolean
+  again_level: number
   visited_on: string | null
   rating: number | null
   tags: string[]
@@ -37,7 +39,8 @@ export function buildExport(couple: Couple, places: Place[]): ExportFile {
       title: place.title,
       category: place.category,
       status: place.status,
-      want_again: place.want_again,
+      want_again: againLevelOf(place) > 0,
+      again_level: againLevelOf(place),
       visited_on: place.visited_on,
       rating: place.rating,
       tags: place.tags ?? [],
@@ -53,11 +56,11 @@ export function buildExport(couple: Couple, places: Place[]): ExportFile {
 }
 
 export function toCsv(file: ExportFile) {
-  const headers = ['名前', '種類', '状態', 'またやりたい', '日付', '評価', 'タグ', 'メモ', 'リンク', '住所', '緯度', '経度', '追加日時']
+  const headers = ['名前', '種類', '状態', 'また行きたい', '日付', '評価', 'タグ', 'メモ', 'リンク', '住所', '緯度', '経度', '追加日時']
   const rows = file.places.map((place) => {
     const category = getCategory(place.category)
     const statusLabel = place.status === 'visited' ? category.done : category.want
-    const again = place.want_again ? category.again : ''
+    const again = againLabel(place.again_level)
     return [
       place.title,
       category.label,
