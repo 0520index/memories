@@ -352,18 +352,6 @@ code {
   line-height: 1;
 }
 
-.category-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  background: var(--primary-soft);
-  color: var(--primary-dark);
-  border-radius: 999px;
-  padding: 3px 10px;
-  white-space: nowrap;
-}
 
 .link-buttons {
   display: flex;
@@ -404,19 +392,19 @@ code {
 }
 
 .place-card.cat-movie {
-  --cat: #8b7cc8;
+  --cat: #b08ad4;
 }
 
 .place-card.cat-book {
-  --cat: #6a93c4;
+  --cat: #7dbea8;
 }
 
 .place-card.cat-food {
-  --cat: #d4896a;
+  --cat: #e8926a;
 }
 
 .place-card.cat-other {
-  --cat: #c48aa8;
+  --cat: #e08aa4;
 }
 
 .update-banner {
@@ -554,16 +542,13 @@ code {
 }
 
 .pin-dot {
-  width: 28px;
-  height: 28px;
-  margin-top: 1px;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
+  width: 11px;
+  height: 11px;
+  margin-top: 7px;
+  border-radius: 50%;
   flex-shrink: 0;
-  font-size: 0.95rem;
-  line-height: 1;
-  background: color-mix(in srgb, var(--cat) 18%, var(--surface));
+  background: var(--cat);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cat) 24%, transparent);
 }
 
 .heart-mark {
@@ -810,7 +795,7 @@ code {
 }
 
 .place-card {
-  --cat: #b08968;
+  --cat: #6aa8e0;
   background: var(--surface);
   border-radius: var(--radius);
   border: 1px solid var(--border);

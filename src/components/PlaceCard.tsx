@@ -19,15 +19,9 @@ export default function PlaceCard({ place, onEdit, onVisited }: Props) {
       <button className="place-body" onClick={onEdit}>
         <div className="memory-top">
           <span>{place.visited_on ? formatDate(place.visited_on) : cat.want}</span>
-          <span className="category-badge">
-            <span aria-hidden="true">{cat.icon}</span>
-            {cat.label}
-          </span>
         </div>
         <div className="memory-main">
-          <span className="pin-dot" aria-hidden="true">
-            {cat.icon}
-          </span>
+          <span className="pin-dot" aria-hidden="true" />
           <div>
             <div className="place-title">{place.title}</div>
             {place.address && <div className="place-address">{place.address}</div>}
