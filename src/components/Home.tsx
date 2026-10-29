@@ -12,12 +12,6 @@ import TodayPick from './TodayPick'
 type Tab = 'want' | 'memories' | 'again' | 'map'
 type SortKey = 'new' | 'old' | 'rating' | 'name'
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'want', label: 'やりたい' },
-  { id: 'memories', label: '思い出' },
-  { id: 'again', label: 'またやりたい' },
-  { id: 'map', label: '地図' },
-]
 
 type Props = {
   couple: Couple
@@ -30,7 +24,7 @@ type Editing = { place: Place | null; preset?: Partial<PlaceInput> }
 export default function Home({ couple, userId, onCoupleChange }: Props) {
   const [places, setPlaces] = useState<Place[]>([])
   const [loading, setLoading] = useState(true)
-  const [tab, setTab] = useState<Tab>('want')
+  const [tab, setTab] = useState<Tab>('memories')
   const [query, setQuery] = useState('')
   const [sort, setSort] = useState<SortKey>('new')
   const [tagFilter, setTagFilter] = useState<string | null>(null)
@@ -182,23 +176,33 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
 
   return (
     <div className="app">
-      <header className="topbar">
-        <h1 className="logo small">{couple.name}</h1>
-        <button className="icon-button" onClick={() => setShowSettings(true)} aria-label="設定">
-          ⚙
-        </button>
+      <header className="home-head">
+        {tab === 'memories' ? (
+          <>
+            <p className="wordmark">Memories</p>
+            <p className="tagline">ふたりの思い出を、地図に。</p>
+          </>
+        ) : (
+          <h1 className="page-title">
+            {tab === 'map' ? '地図で巡る' : tab === 'again' ? 'また行きたい場所' : '行きたい場所'}
+          </h1>
+        )}
+        {tab === 'memories' && (
+          <AnniversaryBanner anniversary={couple.anniversary} onSet={() => setShowSettings(true)} />
+        )}
+        {(tab === 'want' || tab === 'again') && (
+          <div className="segmented">
+            <button type="button" className={tab === 'want' ? 'active' : ''} onClick={() => setTab('want')}>
+              行きたい
+              <span className="count">{counts.want}</span>
+            </button>
+            <button type="button" className={tab === 'again' ? 'active' : ''} onClick={() => setTab('again')}>
+              また行きたい
+              <span className="count">{counts.again}</span>
+            </button>
+          </div>
+        )}
       </header>
-
-      <AnniversaryBanner anniversary={couple.anniversary} onSet={() => setShowSettings(true)} />
-
-      <nav className="tabs">
-        {TABS.map((t) => (
-          <button key={t.id} className={tab === t.id ? 'active' : ''} onClick={() => setTab(t.id)}>
-            {t.label}
-            <span className="count">{counts[t.id]}</span>
-          </button>
-        ))}
-      </nav>
 
       {tab !== 'map' && (
         <div className="filters">
@@ -218,6 +222,13 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
             </select>
           </label>
           <div className="chips">
+            <button
+              type="button"
+              className={`chip ${categoryFilter === null ? 'active' : ''}`}
+              onClick={() => setCategoryFilter(null)}
+            >
+              すべて
+            </button>
             {CATEGORIES.map((c) => {
               const count = places.filter((p) => normalizeCategory(p.category) === c.id).length
               if (count === 0 && usedCategories.length > 0 && categoryFilter !== c.id) return null
@@ -303,9 +314,31 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
         )}
       </main>
 
-      <button className="fab" onClick={openNew} aria-label="追加">
-        ＋
-      </button>
+      <nav className="bottom-nav">
+        <button type="button" className={tab === 'memories' ? 'active' : ''} onClick={() => setTab('memories')}>
+          <NavIcon d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" />
+          ホーム
+        </button>
+        <button type="button" className={tab === 'map' ? 'active' : ''} onClick={() => setTab('map')}>
+          <NavIcon d="M9 18 3 20V6l6-2 6 2 6-2v14l-6 2-6-2zM9 4v14M15 6v14" />
+          地図
+        </button>
+        <button type="button" className="nav-add" onClick={openNew} aria-label="追加">
+          ＋
+        </button>
+        <button
+          type="button"
+          className={tab === 'want' || tab === 'again' ? 'active' : ''}
+          onClick={() => setTab('want')}
+        >
+          <NavIcon d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z" />
+          行きたい
+        </button>
+        <button type="button" onClick={() => setShowSettings(true)}>
+          <NavIcon d="M12 12a3.2 3.2 0 1 0 0-6.4A3.2 3.2 0 0 0 12 12zM5 19.2c.8-2.8 3.5-4.4 7-4.4s6.2 1.6 7 4.4" />
+          マイページ
+        </button>
+      </nav>
 
       {editing && (
         <PlaceForm
@@ -328,6 +361,14 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
         />
       )}
     </div>
+  )
+}
+
+function NavIcon({ d }: { d: string }) {
+  return (
+    <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d={d} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" />
+    </svg>
   )
 }
 

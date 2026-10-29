@@ -52,7 +52,7 @@ export default function App() {
     return (
       <div className="center-screen">
         <div className="card narrow">
-          <h1 className="logo">ふたりの地図</h1>
+          <h1 className="wordmark center">Memories</h1>
           <p>Supabase の接続設定がありません。</p>
           <p className="muted">
             プロジェクト直下に <code>.env.local</code> を作成し、<code>VITE_SUPABASE_URL</code> と{' '}

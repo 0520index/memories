@@ -17,19 +17,22 @@ export default function PlaceCard({ place, onEdit, onVisited }: Props) {
   return (
     <li className={`place-card ${place.status} cat-${cat.id}`}>
       <button className="place-body" onClick={onEdit}>
-        <div className="place-head">
-          <span className="category-badge" title={cat.label}>
+        <div className="memory-top">
+          <span>{place.visited_on ? formatDate(place.visited_on) : cat.want}</span>
+          <span>
             {cat.icon} {cat.label}
           </span>
-          <span className="place-title">{place.title}</span>
-          {place.want_again && <span className="badge">{cat.again}</span>}
         </div>
-        <div className="place-meta">
-          {place.visited_on && <span>{formatDate(place.visited_on)}</span>}
-          <Stars value={place.rating} />
+        <div className="memory-main">
+          <span className="pin-dot" aria-hidden="true" />
+          <div>
+            <div className="place-title">{place.title}</div>
+            {place.address && <div className="place-address">{place.address}</div>}
+            {place.memo && <p className="place-memo">{place.memo}</p>}
+            <Stars value={place.rating} />
+          </div>
+          {place.want_again && <span className="heart-mark">♡</span>}
         </div>
-        {place.address && <div className="place-address">📍 {place.address}</div>}
-        {place.memo && <p className="place-memo">{place.memo}</p>}
         {place.tags.length > 0 && (
           <div className="chips">
             {place.tags.map((t) => (

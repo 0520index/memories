@@ -3,7 +3,7 @@
   "short_name": "ふたりの地図",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fff4ec",
-  "theme_color": "#ff6b4a",
+  "background_color": "#f6f1ea",
+  "theme_color": "#b08968",
   "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
 }

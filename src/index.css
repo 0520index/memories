@@ -1,20 +1,21 @@
 :root {
-  --bg: #fff4ec;
-  --surface: #ffffff;
-  --text: #3b2a22;
-  --muted: #8d7468;
-  --border: #f0ddd2;
-  --primary: #ff6b4a;
-  --primary-dark: #e85432;
-  --primary-soft: #ffe8df;
+  --bg: #f6f1ea;
+  --surface: #fffdfb;
+  --text: #4a3b32;
+  --muted: #9a8b80;
+  --border: #efe4da;
+  --primary: #b08968;
+  --primary-dark: #8d6b52;
+  --primary-soft: #f3ebe3;
   --on-primary: #fff;
-  --want: #2aa7a1;
-  --again: #f0a202;
-  --danger: #e23d3d;
-  --radius: 18px;
-  --shadow: 0 10px 28px rgba(255, 107, 74, 0.16);
+  --want: #6a9bd8;
+  --again: #e08b78;
+  --danger: #c45c5c;
+  --radius: 22px;
+  --shadow: 0 10px 28px rgba(90, 62, 42, 0.06);
+  --serif: 'Palatino Linotype', 'Yu Mincho', 'Hiragino Mincho ProN', 'Iowan Old Style', serif;
 
-  font-family: 'Hiragino Maru Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic UI', system-ui, sans-serif;
+  font-family: 'Hiragino Sans', 'Hiragino Maru Gothic ProN', 'Noto Sans JP', 'Yu Gothic UI', system-ui, sans-serif;
   color: var(--text);
   background: var(--bg);
   line-height: 1.6;
@@ -23,26 +24,19 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #1c1412;
-    --surface: #2a201c;
-    --text: #fff6f0;
-    --muted: #c4a89c;
-    --border: #4a342c;
-    --primary: #ff7d5c;
-    --primary-dark: #ff9a80;
-    --primary-soft: #4a2e28;
-    --on-primary: #fff;
-    --want: #3ecfc8;
-    --again: #ffc14d;
-    --danger: #ff8d8d;
-    --shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
-  }
-
-  body {
-    background:
-      radial-gradient(800px 380px at 100% -10%, rgba(255, 107, 74, 0.28), transparent 60%),
-      radial-gradient(600px 320px at 0% 0%, rgba(255, 179, 71, 0.16), transparent 55%),
-      var(--bg);
+    --bg: #1c1815;
+    --surface: #2a241f;
+    --text: #f6f0e8;
+    --muted: #c4b4a6;
+    --border: #3d342c;
+    --primary: #d4b496;
+    --primary-dark: #ead4bc;
+    --primary-soft: #3a312a;
+    --on-primary: #2a211b;
+    --want: #8eb4e8;
+    --again: #f0b0a2;
+    --danger: #f0a0a0;
+    --shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
   }
 }
 
@@ -67,10 +61,7 @@ body {
   /* 縦スクロールのみ許可（地図は個別に上書き） */
   touch-action: pan-y;
   position: relative;
-  background:
-    radial-gradient(900px 420px at 100% -10%, rgba(255, 196, 120, 0.55), transparent 60%),
-    radial-gradient(700px 380px at -10% 0%, rgba(255, 107, 74, 0.18), transparent 55%),
-    var(--bg);
+  background: var(--bg);
 }
 
 #root {
@@ -281,7 +272,7 @@ code {
 
 .card {
   background: var(--surface);
-  border-radius: 12px;
+  border-radius: var(--radius);
   border: 1px solid var(--border);
   padding: 28px 24px;
   box-shadow: var(--shadow);
@@ -461,16 +452,132 @@ code {
   padding: 14px 0 10px;
 }
 
+.home-head {
+  padding: 18px 4px 8px;
+}
+
+.wordmark {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 2.4rem;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.tagline {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.wordmark.center,
+.tagline.center {
+  text-align: center;
+}
+
+.page-title {
+  font-family: var(--serif);
+  font-size: 1.7rem;
+  font-weight: 600;
+}
+
+.bottom-nav {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: min(720px, 100%);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: end;
+  gap: 2px;
+  padding: 8px 8px calc(10px + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  z-index: 600;
+}
+
+.bottom-nav button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 4px 0;
+}
+
+.bottom-nav button.active {
+  color: var(--primary-dark);
+}
+
+.bottom-nav .nav-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.bottom-nav .nav-add {
+  width: 52px;
+  height: 52px;
+  margin: -18px auto 0;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 1.7rem;
+  box-shadow: 0 8px 16px rgba(141, 107, 82, 0.28);
+  justify-content: center;
+}
+
+.memory-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.memory-main {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.pin-dot {
+  width: 12px;
+  height: 12px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--again);
+  flex-shrink: 0;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--again) 18%, transparent);
+}
+
+.place-card.want .pin-dot {
+  background: var(--want);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--want) 18%, transparent);
+}
+
+.heart-mark {
+  margin-left: auto;
+  color: var(--again);
+  font-size: 1.1rem;
+}
+
 /* anniversary */
 .banner {
   display: block;
   width: 100%;
-  background: linear-gradient(120deg, #ff8a5b, #ff5d73 55%, #ffb347);
-  color: #fff;
+  background: transparent;
+  color: var(--muted);
   border: none;
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  box-shadow: var(--shadow);
+  border-radius: 0;
+  padding: 4px 2px 0;
+  box-shadow: none;
   text-align: left;
 }
 
@@ -487,8 +594,10 @@ code {
 }
 
 .banner-main strong {
-  font-size: 2.1rem;
-  font-weight: 800;
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text);
   margin: 0 4px;
 }
 
@@ -643,16 +752,11 @@ code {
 .place-card {
   background: var(--surface);
   border-radius: var(--radius);
-  border: none;
+  border: 1px solid var(--border);
   box-shadow: var(--shadow);
-  border-left: 6px solid var(--primary);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-
-.place-card.want {
-  border-left-color: var(--want);
 }
 
 .place-body {
@@ -765,10 +869,10 @@ code {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(145deg, #ff8a5b, #ff5d73);
-  color: #fff;
-  font-size: 1.8rem;
-  box-shadow: 0 10px 24px rgba(255, 93, 115, 0.4);
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 1.6rem;
+  box-shadow: 0 8px 18px rgba(141, 107, 82, 0.28);
   z-index: 500;
 }
 

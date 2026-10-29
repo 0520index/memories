@@ -32,8 +32,8 @@ export default function Auth() {
   return (
     <div className="center-screen">
       <form className="card narrow" onSubmit={submit}>
-        <h1 className="logo">ふたりの地図</h1>
-        <p className="muted center">思い出と、行きたい場所を二人で。</p>
+        <h1 className="wordmark center">Memories</h1>
+        <p className="tagline center">ふたりの思い出を、地図に。</p>
 
         <div className="segmented">
           <button type="button" className={mode === 'signin' ? 'active' : ''} onClick={() => setMode('signin')}>
