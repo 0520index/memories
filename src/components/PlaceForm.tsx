@@ -222,7 +222,7 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
               <button
                 key={t}
                 type="button"
-                className="chip active"
+                className="tag-chip active"
                 onClick={() => set('tags', form.tags.filter((x) => x !== t))}
                 aria-label={`${t} を外す`}
               >
@@ -244,7 +244,7 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
           {suggestions.length > 0 && (
             <div className="chips">
               {suggestions.map((t) => (
-                <button key={t} type="button" className="chip" onClick={() => addTag(t)}>
+                <button key={t} type="button" className="tag-chip" onClick={() => addTag(t)}>
                   #{t}
                 </button>
               ))}

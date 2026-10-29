@@ -19,8 +19,9 @@ export default function PlaceCard({ place, onEdit, onVisited }: Props) {
       <button className="place-body" onClick={onEdit}>
         <div className="memory-top">
           <span>{place.visited_on ? formatDate(place.visited_on) : cat.want}</span>
-          <span>
-            {cat.icon} {cat.label}
+          <span className="category-badge">
+            <span aria-hidden="true">{cat.icon}</span>
+            {cat.label}
           </span>
         </div>
         <div className="memory-main">
@@ -36,7 +37,7 @@ export default function PlaceCard({ place, onEdit, onVisited }: Props) {
         {place.tags.length > 0 && (
           <div className="chips">
             {place.tags.map((t) => (
-              <span key={t} className="chip static">
+              <span key={t} className="tag-chip">
                 #{t}
               </span>
             ))}

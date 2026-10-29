@@ -221,48 +221,55 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
               <option value="name">Name</option>
             </select>
           </label>
-          <div className="chips">
-            <button
-              type="button"
-              className={`chip ${categoryFilter === null ? 'active' : ''}`}
-              onClick={() => setCategoryFilter(null)}
-            >
-              All
-            </button>
-            {CATEGORIES.map((c) => {
-              const count = places.filter((p) => normalizeCategory(p.category) === c.id).length
-              if (count === 0 && usedCategories.length > 0 && categoryFilter !== c.id) return null
-              return (
-                <button
-                  key={c.id}
-                  className={`chip category-chip ${categoryFilter === c.id ? 'active' : ''}`}
-                  onClick={() => setCategoryFilter(categoryFilter === c.id ? null : c.id)}
-                >
-                  {c.icon} {c.label}
-                </button>
-              )
-            })}
+          <div className="filter-group">
+            <span className="filter-label">Category</span>
+            <div className="chips">
+              <button
+                type="button"
+                className={`category-chip ${categoryFilter === null ? 'active' : ''}`}
+                onClick={() => setCategoryFilter(null)}
+              >
+                All
+              </button>
+              {CATEGORIES.map((c) => {
+                const count = places.filter((p) => normalizeCategory(p.category) === c.id).length
+                if (count === 0 && usedCategories.length > 0 && categoryFilter !== c.id) return null
+                return (
+                  <button
+                    key={c.id}
+                    className={`category-chip ${categoryFilter === c.id ? 'active' : ''}`}
+                    onClick={() => setCategoryFilter(categoryFilter === c.id ? null : c.id)}
+                  >
+                    <span className="category-icon" aria-hidden="true">{c.icon}</span>
+                    {c.label}
+                  </button>
+                )
+              })}
+            </div>
           </div>
           {tagCounts.length > 0 && (
-            <div className="chips">
-              {shortcutTags.map((tag) => (
-                <button
-                  key={tag}
-                  className={`chip ${tagFilter === tag ? 'active' : ''}`}
-                  onClick={() => setTagFilter(tagFilter === tag ? null : tag)}
-                >
-                  #{tag}
-                </button>
-              ))}
-              {tagCounts.length > popularTags.length && (
-                <button
-                  type="button"
-                  className={`chip ${showAllTags ? 'active' : ''}`}
-                  onClick={() => setShowAllTags((open) => !open)}
-                >
-                  All Tags
-                </button>
-              )}
+            <div className="filter-group">
+              <span className="filter-label">Tags</span>
+              <div className="chips">
+                {shortcutTags.map((tag) => (
+                  <button
+                    key={tag}
+                    className={`tag-chip ${tagFilter === tag ? 'active' : ''}`}
+                    onClick={() => setTagFilter(tagFilter === tag ? null : tag)}
+                  >
+                    #{tag}
+                  </button>
+                ))}
+                {tagCounts.length > popularTags.length && (
+                  <button
+                    type="button"
+                    className={`tag-chip ${showAllTags ? 'active' : ''}`}
+                    onClick={() => setShowAllTags((open) => !open)}
+                  >
+                    All Tags
+                  </button>
+                )}
+              </div>
             </div>
           )}
           {showAllTags && (
@@ -282,7 +289,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
                     <button
                       key={tag}
                       type="button"
-                      className={`chip ${tagFilter === tag ? 'active' : ''}`}
+                      className={`tag-chip ${tagFilter === tag ? 'active' : ''}`}
                       onClick={() => setTagFilter(tagFilter === tag ? null : tag)}
                     >
                       #{tag}
