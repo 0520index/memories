@@ -1,21 +1,21 @@
 import L from 'leaflet'
 import type { Place } from '../types'
 
-function pin(color: string) {
+function pin(token: string) {
   return L.divIcon({
     className: 'pin-icon',
-    html: `<span style="background:${color}"></span>`,
-    iconSize: [26, 26],
-    iconAnchor: [13, 26],
+    html: `<span style="background:var(${token})"></span>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 26],
     popupAnchor: [0, -24],
   })
 }
 
 export const icons = {
-  want: pin('#4f8cff'),
-  visited: pin('#f06292'),
-  again: pin('#ffa726'),
-  picker: pin('#7e57c2'),
+  want: pin('--pin-want'),
+  visited: pin('--pin-visited'),
+  again: pin('--pin-again'),
+  picker: pin('--pin-picker'),
 }
 
 export function iconFor(p: Place) {
