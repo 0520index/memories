@@ -33,39 +33,39 @@ export default function CoupleSetup({ onDone }: Props) {
   return (
     <div className="center-screen">
       <form className="card narrow" onSubmit={submit}>
-        <h2>ふたりのスペース</h2>
+        <h2>Our Space</h2>
         <p className="muted">
           どちらか一人がスペースを作り、表示される招待コードをもう一人が入力すると、データが共有されます。
         </p>
 
         <div className="segmented">
           <button type="button" className={mode === 'create' ? 'active' : ''} onClick={() => setMode('create')}>
-            新しく作る
+            Create
           </button>
           <button type="button" className={mode === 'join' ? 'active' : ''} onClick={() => setMode('join')}>
-            招待コードで参加
+            Join
           </button>
         </div>
 
         <label>
-          あなたの呼び名
+          Name
           <input required value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="例: たろう" />
         </label>
 
         {mode === 'create' ? (
           <>
             <label>
-              スペースの名前
+              Space
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder="ふたりの思い出" />
             </label>
             <label>
-              付き合った日
+              Anniversary
               <input type="date" value={anniversary} onChange={(e) => setAnniversary(e.target.value)} />
             </label>
           </>
         ) : (
           <label>
-            招待コード
+            Code
             <input
               required
               value={code}
@@ -79,10 +79,10 @@ export default function CoupleSetup({ onDone }: Props) {
         {error && <p className="error">{error}</p>}
 
         <button className="primary" disabled={busy}>
-          {busy ? '処理中…' : mode === 'create' ? '作成する' : '参加する'}
+          {busy ? '処理中…' : mode === 'create' ? 'Create' : 'Join'}
         </button>
         <button type="button" className="link" onClick={() => supabase.auth.signOut()}>
-          ログアウト
+          Log out
         </button>
       </form>
     </div>

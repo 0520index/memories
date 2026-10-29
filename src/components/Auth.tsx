@@ -37,19 +37,19 @@ export default function Auth() {
 
         <div className="segmented">
           <button type="button" className={mode === 'signin' ? 'active' : ''} onClick={() => setMode('signin')}>
-            ログイン
+            Log in
           </button>
           <button type="button" className={mode === 'signup' ? 'active' : ''} onClick={() => setMode('signup')}>
-            新規登録
+            Sign up
           </button>
         </div>
 
         <label>
-          メールアドレス
+          Email
           <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
         </label>
         <label>
-          パスワード（6文字以上）
+          Password（6文字以上）
           <input
             type="password"
             required
@@ -64,7 +64,7 @@ export default function Auth() {
         {message && <p className="notice">{message}</p>}
 
         <button className="primary" disabled={busy}>
-          {busy ? '処理中…' : mode === 'signin' ? 'ログイン' : 'アカウントを作成'}
+          {busy ? '処理中…' : mode === 'signin' ? 'Log in' : 'Sign up'}
         </button>
       </form>
     </div>

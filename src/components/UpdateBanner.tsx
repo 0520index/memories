@@ -39,7 +39,7 @@ export default function UpdateBanner() {
           await forceReloadToLatest()
         }}
       >
-        {busy ? '更新中…' : '更新する'}
+        {busy ? '更新中…' : 'Update'}
       </button>
     </div>
   )

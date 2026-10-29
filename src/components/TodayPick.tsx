@@ -47,10 +47,10 @@ export default function TodayPick({ coupleId, candidates, onOpen, onVisited }: P
   return (
     <>
       <button type="button" className="pick-button" onClick={reveal}>
-        🎲 今日の一軒
+        🎲 Today's Pick
       </button>
       {open && (
-        <Modal title="今日の一軒" onClose={() => setOpen(false)}>
+        <Modal title="Today's Pick" onClose={() => setOpen(false)}>
           {notice && <p className="muted center">{notice}</p>}
           {picked && (
             <>
@@ -60,7 +60,7 @@ export default function TodayPick({ coupleId, candidates, onOpen, onVisited }: P
               </ul>
               <div className="row between">
                 <button type="button" className="secondary" onClick={() => draw(picked.id)}>
-                  もう一回
+                  Shuffle
                 </button>
                 <button
                   type="button"
@@ -70,7 +70,7 @@ export default function TodayPick({ coupleId, candidates, onOpen, onVisited }: P
                     onOpen(picked)
                   }}
                 >
-                  詳細を見る
+                  Open
                 </button>
               </div>
             </>

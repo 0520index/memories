@@ -63,24 +63,24 @@ export default function Settings({ couple, userId, places, onClose, onCoupleChan
   }
 
   return (
-    <Modal title="設定" onClose={onClose}>
+    <Modal title="Settings" onClose={onClose}>
       <form className="form" onSubmit={submit}>
         <label>
-          スペースの名前
+          Space
           <input value={name} onChange={(e) => setName(e.target.value)} />
         </label>
         <label>
-          付き合った日
+          Anniversary
           <input type="date" value={anniversary} onChange={(e) => setAnniversary(e.target.value)} />
         </label>
         {error && <p className="error">{error}</p>}
         <button className="primary" disabled={busy}>
-          保存
+          Save
         </button>
       </form>
 
       <section className="settings-section">
-        <h3>メンバー</h3>
+        <h3>Members</h3>
         <ul className="members">
           {members.map((m) => (
             <li key={m.user_id}>
@@ -91,11 +91,11 @@ export default function Settings({ couple, userId, places, onClose, onCoupleChan
         </ul>
         {members.length < 2 && (
           <div className="invite">
-            <p className="muted">相手にこの招待コードを伝えて、「招待コードで参加」から入力してもらってください。</p>
+            <p className="muted">相手にこの招待コードを伝えて、「Join」から入力してもらってください。</p>
             <div className="row">
               <code className="invite-code">{couple.invite_code}</code>
               <button type="button" className="secondary" onClick={copyCode}>
-                {copied ? 'コピーしました' : 'コピー'}
+                {copied ? 'Copied' : 'Copy'}
               </button>
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function Settings({ couple, userId, places, onClose, onCoupleChan
       </section>
 
       <section className="settings-section">
-        <h3>書き出し</h3>
+        <h3>Export</h3>
         <p className="muted small-text">
           いまの一覧（{places.length}件）をファイルに保存します。招待コードやログイン情報は含まれません。
         </p>
@@ -118,7 +118,7 @@ export default function Settings({ couple, userId, places, onClose, onCoupleChan
       </section>
 
       <section className="settings-section">
-        <h3>アプリの更新</h3>
+        <h3>Update</h3>
         <p className="muted small-text">
           改修を公開したあと、iPhone のホーム画面アプリが古いままのときはここから更新できます。
         </p>
@@ -145,7 +145,7 @@ export default function Settings({ couple, userId, places, onClose, onCoupleChan
             onCoupleChange(null)
           }}
         >
-          ログアウト
+          Log out
         </button>
       </section>
     </Modal>

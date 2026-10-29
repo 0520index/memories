@@ -104,10 +104,10 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
   const suggestions = existingTags.filter((t) => !form.tags.includes(t))
 
   return (
-    <Modal title={place ? '編集' : '追加'} onClose={onClose}>
+    <Modal title={place ? 'Edit' : 'New'} onClose={onClose}>
       <form className="form" onSubmit={submit}>
         <div className="field">
-          <span>種類</span>
+          <span>Category</span>
           <div className="category-grid">
             {CATEGORIES.map((c) => (
               <button
@@ -124,7 +124,7 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
         </div>
 
         <label>
-          名前
+          Title
           <input
             required
             value={form.title}
@@ -142,14 +142,14 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
             className={visited ? 'active' : ''}
             onClick={() => setForm((f) => ({ ...f, status: 'visited', visited_on: f.visited_on ?? todayIso() }))}
           >
-            {cat.done}（思い出）
+            {cat.done}
           </button>
         </div>
 
         {visited && (
           <>
             <label>
-              {cat.done}日
+              {cat.dateLabel}
               <input
                 type="date"
                 value={form.visited_on ?? ''}
@@ -157,7 +157,7 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
               />
             </label>
             <div className="field">
-              <span>評価</span>
+              <span>Rating</span>
               <Stars value={form.rating} onChange={(v) => set('rating', v)} />
             </div>
             <label className="toggle">
@@ -168,7 +168,7 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
         )}
 
         <label>
-          メモ
+          Memo
           <textarea
             rows={4}
             value={form.memo ?? ''}
@@ -178,7 +178,7 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
         </label>
 
         <div className="field">
-          <span>リンク</span>
+          <span>Link</span>
           {form.links.length > 0 && (
             <div className="chips">
               {form.links.map((url) => (
@@ -209,14 +209,14 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
               placeholder="https://www.instagram.com/..."
             />
             <button type="button" className="secondary" onClick={() => addLink(linkDraft)}>
-              追加
+              Add
             </button>
           </div>
           <LinkButtons urls={form.links} className="in-form" />
         </div>
 
         <div className="field">
-          <span>タグ</span>
+          <span>Tags</span>
           <div className="chips">
             {form.tags.map((t) => (
               <button
@@ -255,7 +255,7 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
         {cat.showLocation && (
           <>
             <label>
-              住所・エリア
+              Address
               <input
                 value={form.address ?? ''}
                 onChange={(e) => set('address', e.target.value)}
@@ -289,13 +289,13 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
         <div className="row between actions">
           {place ? (
             <button type="button" className="danger" onClick={handleDelete} disabled={busy}>
-              削除
+              Delete
             </button>
           ) : (
             <span />
           )}
           <button className="primary" disabled={busy}>
-            {busy ? '保存中…' : '保存'}
+            {busy ? '保存中…' : 'Save'}
           </button>
         </div>
       </form>

@@ -12,6 +12,8 @@ export type CategoryMeta = {
   again: string
   /** 「完了した！」ボタン */
   markDone: string
+  /** 日付入力の見出し（説明なので日本語） */
+  dateLabel: string
   titlePlaceholder: string
   memoWant: string
   memoDone: string
@@ -21,12 +23,13 @@ export type CategoryMeta = {
 export const CATEGORIES: CategoryMeta[] = [
   {
     id: 'place',
-    label: '場所',
+    label: 'Place',
     icon: '📍',
-    want: '行きたい',
-    done: '行った',
-    again: 'また行きたい',
+    want: 'Want',
+    done: 'Visited',
+    again: 'Want again',
     markDone: '行った！',
+    dateLabel: '行った日',
     titlePlaceholder: '例: 江の島',
     memoWant: '行きたい理由、気になるメニューなど',
     memoDone: 'どんな一日だった？',
@@ -34,12 +37,13 @@ export const CATEGORIES: CategoryMeta[] = [
   },
   {
     id: 'movie',
-    label: '映画',
+    label: 'Movie',
     icon: '🎬',
-    want: '見たい',
-    done: '見た',
-    again: 'また見たい',
+    want: 'Want',
+    done: 'Watched',
+    again: 'Want again',
     markDone: '見た！',
+    dateLabel: '見た日',
     titlePlaceholder: '例: 君の名は。',
     memoWant: '予告で気になったところ、誰と見たいかなど',
     memoDone: '感想・好きなシーンなど',
@@ -47,12 +51,13 @@ export const CATEGORIES: CategoryMeta[] = [
   },
   {
     id: 'book',
-    label: '本',
+    label: 'Book',
     icon: '📚',
-    want: '読みたい',
-    done: '読んだ',
-    again: 'また読みたい',
+    want: 'Want',
+    done: 'Read',
+    again: 'Want again',
     markDone: '読んだ！',
+    dateLabel: '読んだ日',
     titlePlaceholder: '例: 夜は短し歩けよ乙女',
     memoWant: '気になった理由、おすすめされたきっかけなど',
     memoDone: '感想・好きな一文など',
@@ -60,12 +65,13 @@ export const CATEGORIES: CategoryMeta[] = [
   },
   {
     id: 'food',
-    label: 'グルメ',
+    label: 'Food',
     icon: '🍽',
-    want: '行きたい',
-    done: '行った',
-    again: 'また行きたい',
+    want: 'Want',
+    done: 'Visited',
+    again: 'Want again',
     markDone: '行った！',
+    dateLabel: '行った日',
     titlePlaceholder: '例: ○○ラーメン',
     memoWant: '食べたいメニュー、誰に勧められたかなど',
     memoDone: '何を食べた？また頼みたいものは？',
@@ -73,12 +79,13 @@ export const CATEGORIES: CategoryMeta[] = [
   },
   {
     id: 'other',
-    label: 'その他',
+    label: 'Other',
     icon: '✨',
-    want: 'やりたい',
-    done: 'やった',
-    again: 'またやりたい',
+    want: 'Want',
+    done: 'Done',
+    again: 'Want again',
     markDone: 'やった！',
+    dateLabel: 'やった日',
     titlePlaceholder: '例: 花火大会',
     memoWant: 'やりたいこと、気になるポイントなど',
     memoDone: 'どんな体験だった？',

@@ -30,7 +30,7 @@ export default function MapView({ places, onSelect }: Props) {
                 <Stars value={p.rating} />
                 <LinkButtons urls={placeLinks(p)} />
                 <button className="link" onClick={() => onSelect(p)}>
-                  詳細・編集
+                  Edit
                 </button>
               </div>
             </Popup>
@@ -38,9 +38,9 @@ export default function MapView({ places, onSelect }: Props) {
         ))}
       </MapContainer>
       <div className="legend">
-        <span><i className="dot want" />行きたい</span>
-        <span><i className="dot visited" />行った</span>
-        <span><i className="dot again" />また行きたい</span>
+        <span><i className="dot want" />Want</span>
+        <span><i className="dot visited" />Visited</span>
+        <span><i className="dot again" />Again</span>
       </div>
       {located.length === 0 && <p className="muted center">場所を登録するときに地図で位置を選ぶと、ここに表示されます</p>}
     </div>

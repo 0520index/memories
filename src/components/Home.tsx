@@ -184,7 +184,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
           </>
         ) : (
           <h1 className="page-title">
-            {tab === 'map' ? '地図で巡る' : tab === 'again' ? 'また行きたい場所' : '行きたい場所'}
+            {tab === 'map' ? 'Map' : tab === 'again' ? 'Again' : 'Want'}
           </h1>
         )}
         {tab === 'memories' && (
@@ -193,11 +193,11 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
         {(tab === 'want' || tab === 'again') && (
           <div className="segmented">
             <button type="button" className={tab === 'want' ? 'active' : ''} onClick={() => setTab('want')}>
-              行きたい
+              Want
               <span className="count">{counts.want}</span>
             </button>
             <button type="button" className={tab === 'again' ? 'active' : ''} onClick={() => setTab('again')}>
-              また行きたい
+              Again
               <span className="count">{counts.again}</span>
             </button>
           </div>
@@ -213,12 +213,12 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
             onChange={(e) => setQuery(e.target.value)}
           />
           <label className="sort-field">
-            <span>並び替え</span>
-            <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} aria-label="並び替え">
-              <option value="new">新しい順</option>
-              <option value="old">古い順</option>
-              <option value="rating">評価が高い順</option>
-              <option value="name">名前順</option>
+            <span>Sort</span>
+            <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} aria-label="Sort">
+              <option value="new">Newest</option>
+              <option value="old">Oldest</option>
+              <option value="rating">Rating</option>
+              <option value="name">Name</option>
             </select>
           </label>
           <div className="chips">
@@ -227,7 +227,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
               className={`chip ${categoryFilter === null ? 'active' : ''}`}
               onClick={() => setCategoryFilter(null)}
             >
-              すべて
+              All
             </button>
             {CATEGORIES.map((c) => {
               const count = places.filter((p) => normalizeCategory(p.category) === c.id).length
@@ -260,7 +260,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
                   className={`chip ${showAllTags ? 'active' : ''}`}
                   onClick={() => setShowAllTags((open) => !open)}
                 >
-                  すべてのタグ
+                  All Tags
                 </button>
               )}
             </div>
@@ -317,11 +317,11 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
       <nav className="bottom-nav">
         <button type="button" className={tab === 'memories' ? 'active' : ''} onClick={() => setTab('memories')}>
           <NavIcon d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" />
-          ホーム
+          Home
         </button>
         <button type="button" className={tab === 'map' ? 'active' : ''} onClick={() => setTab('map')}>
           <NavIcon d="M9 18 3 20V6l6-2 6 2 6-2v14l-6 2-6-2zM9 4v14M15 6v14" />
-          地図
+          Map
         </button>
         <button type="button" className="nav-add" onClick={openNew} aria-label="追加">
           ＋
@@ -332,11 +332,11 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
           onClick={() => setTab('want')}
         >
           <NavIcon d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z" />
-          行きたい
+          Want
         </button>
         <button type="button" onClick={() => setShowSettings(true)}>
           <NavIcon d="M12 12a3.2 3.2 0 1 0 0-6.4A3.2 3.2 0 0 0 12 12zM5 19.2c.8-2.8 3.5-4.4 7-4.4s6.2 1.6 7 4.4" />
-          マイページ
+          Me
         </button>
       </nav>
 
@@ -377,7 +377,7 @@ function EmptyState({ tab, filtering }: { tab: Tab; filtering: boolean }) {
   const text: Record<Exclude<Tab, 'map'>, string> = {
     want: '行きたい場所や見たい映画を ＋ から追加しよう',
     memories: '二人で行った場所・見た映画を記録しよう',
-    again: '思い出で「またやりたい」をオンにするとここに並びます',
+    again: '思い出で「Want again」をオンにするとここに並びます',
   }
   return <p className="empty">{text[tab as Exclude<Tab, 'map'>]}</p>
 }

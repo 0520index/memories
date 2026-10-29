@@ -47,7 +47,7 @@ export default function LocationPicker({ value, onChange, initialQuery }: Props)
           placeholder="店名・住所で検索"
         />
         <button type="button" className="secondary" onClick={search} disabled={searching}>
-          {searching ? '…' : '検索'}
+          {searching ? '…' : 'Search'}
         </button>
       </div>
       {error && <p className="muted small-text">{error}</p>}
@@ -80,7 +80,7 @@ export default function LocationPicker({ value, onChange, initialQuery }: Props)
         <span className="muted small-text">地図をタップしても位置を指定できます</span>
         {value && (
           <button type="button" className="link" onClick={() => onChange(null)}>
-            位置をクリア
+            Clear
           </button>
         )}
       </div>
