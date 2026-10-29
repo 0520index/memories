@@ -47,7 +47,7 @@ export default function TodayPick({ coupleId, candidates, onOpen, onVisited }: P
   return (
     <>
       <button type="button" className="pick-button" onClick={reveal}>
-        🎲 Today's Pick
+        Today's Pick
       </button>
       {open && (
         <Modal title="Today's Pick" onClose={() => setOpen(false)}>
