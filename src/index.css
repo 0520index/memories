@@ -485,7 +485,15 @@ code {
 }
 
 .home-head {
-  padding: 18px 4px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 0 4px;
+}
+
+.title-block {
+  padding: 0 2px 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 42%, var(--border));
 }
 
 .wordmark {
@@ -707,12 +715,12 @@ code {
 .banner {
   display: block;
   width: 100%;
-  background: transparent;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
   color: var(--muted);
-  border: none;
-  border-radius: 0;
-  padding: 4px 2px 0;
-  box-shadow: none;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 10px 14px 12px;
+  box-shadow: var(--shadow);
   text-align: left;
 }
 
@@ -787,10 +795,21 @@ code {
 .filters {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin: 14px 0 18px;
+  padding: 12px 12px 14px;
   max-width: 100%;
   overflow-x: hidden;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.filters > .filter-group,
+.filters > .tag-browser {
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
 }
 
 .sort-field {
@@ -849,11 +868,21 @@ code {
 }
 
 .filter-label {
-  font-size: 0.68rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--primary-dark);
+}
+
+.filter-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
 }
 
 .chips {

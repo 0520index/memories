@@ -300,16 +300,18 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
   return (
     <div className="app">
       <header className="home-head">
-        {tab === 'memories' ? (
-          <>
-            <h1 className="wordmark">{couple.name}</h1>
-            <p className="tagline">ふたりの思い出を、地図に。</p>
-          </>
-        ) : (
-          <h1 className="page-title">
-            {tab === 'map' ? 'Map' : tab === 'again' ? 'Again' : 'Want'}
-          </h1>
-        )}
+        <div className="title-block">
+          {tab === 'memories' ? (
+            <>
+              <h1 className="wordmark">{couple.name}</h1>
+              <p className="tagline">ふたりの思い出を、地図に。</p>
+            </>
+          ) : (
+            <h1 className="page-title">
+              {tab === 'map' ? 'Map' : tab === 'again' ? 'Again' : 'Want'}
+            </h1>
+          )}
+        </div>
         {tab === 'memories' && (
           <AnniversaryBanner anniversary={couple.anniversary} onSet={() => setShowSettings(true)} />
         )}
