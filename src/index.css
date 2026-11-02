@@ -75,7 +75,32 @@ body {
   background: var(--bg);
 }
 
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(rgba(120, 86, 58, 0.045) 0.6px, transparent 0.7px),
+    url('/bg-map.svg');
+  background-repeat: repeat, no-repeat;
+  background-position: 0 0, center top;
+  background-size: 4px 4px, cover;
+}
+
+@media (prefers-color-scheme: dark) {
+  body::before {
+    background-image:
+      radial-gradient(rgba(232, 214, 196, 0.045) 0.6px, transparent 0.7px),
+      url('/bg-map-dark.svg');
+  }
+}
+
 #root {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
