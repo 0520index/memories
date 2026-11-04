@@ -12,7 +12,7 @@ import LinkButtons from './LinkButtons'
 type PinKind = 'want' | 'visited' | 'again'
 
 const LEGEND: { id: PinKind; label: string }[] = [
-  { id: 'want', label: 'To do' },
+  { id: 'want', label: 'To Do' },
   { id: 'visited', label: 'Visited' },
   { id: 'again', label: 'Again' },
 ]
