@@ -322,7 +322,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
             </>
           ) : (
             <h1 className="page-title">
-              {tab === 'map' ? 'Map' : tab === 'again' ? 'Again' : 'Want'}
+              {tab === 'map' ? 'Map' : tab === 'again' ? 'Again' : 'To do'}
             </h1>
           )}
         </div>
@@ -332,7 +332,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
         {(tab === 'want' || tab === 'again') && (
           <div className="segmented">
             <button type="button" className={tab === 'want' ? 'active' : ''} onClick={() => setTab('want')}>
-              Want
+              To do
               <span className="count">{counts.want}</span>
             </button>
             <button type="button" className={tab === 'again' ? 'active' : ''} onClick={() => setTab('again')}>
@@ -506,7 +506,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
           onClick={() => setTab('want')}
         >
           <NavIcon d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z" />
-          Want
+          To do
         </button>
         <button type="button" className="nav-add" onClick={openNew} aria-label="追加">
           ＋
