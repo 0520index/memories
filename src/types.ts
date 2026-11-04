@@ -33,6 +33,7 @@ export type Place = {
   address: string | null
   lat: number | null
   lng: number | null
+  is_private: boolean
   created_by: string | null
   created_at: string
   updated_at: string

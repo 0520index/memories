@@ -44,24 +44,33 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
   const [editing, setEditing] = useState<Editing | null>(null)
   const [showSettings, setShowSettings] = useState(false)
 
-  const upsertLocal = useCallback((p: Place) => {
-    const again_level = againLevelOf(p)
-    const normalized = {
-      ...p,
-      category: normalizeCategory(p.category),
-      links: Array.isArray(p.links) ? p.links : [],
-      tags: p.tags ?? [],
-      again_level,
-      want_again: again_level > 0,
-    }
-    setPlaces((prev) => {
-      const i = prev.findIndex((x) => x.id === normalized.id)
-      if (i === -1) return [normalized, ...prev]
-      const next = prev.slice()
-      next[i] = normalized
-      return next
-    })
-  }, [])
+  const upsertLocal = useCallback(
+    (p: Place) => {
+      const again_level = againLevelOf(p)
+      const is_private = Boolean(p.is_private)
+      if (is_private && p.created_by !== userId) {
+        setPlaces((prev) => prev.filter((x) => x.id !== p.id))
+        return
+      }
+      const normalized = {
+        ...p,
+        category: normalizeCategory(p.category),
+        links: Array.isArray(p.links) ? p.links : [],
+        tags: p.tags ?? [],
+        again_level,
+        want_again: again_level > 0,
+        is_private,
+      }
+      setPlaces((prev) => {
+        const i = prev.findIndex((x) => x.id === normalized.id)
+        if (i === -1) return [normalized, ...prev]
+        const next = prev.slice()
+        next[i] = normalized
+        return next
+      })
+    },
+    [userId],
+  )
 
   const removeLocal = useCallback((id: string) => {
     setPlaces((prev) => prev.filter((x) => x.id !== id))
@@ -78,6 +87,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
         if (!active) return
         const list = ((data as Place[]) ?? []).map((p) => {
           const again_level = againLevelOf(p)
+          const is_private = Boolean(p.is_private)
           return {
             ...p,
             category: normalizeCategory(p.category),
@@ -85,6 +95,7 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
             tags: p.tags ?? [],
             again_level,
             want_again: again_level > 0,
+            is_private,
           }
         })
         setPlaces(list)
@@ -204,10 +215,13 @@ export default function Home({ couple, userId, onCoupleChange }: Props) {
     const { data, error } = await query.select().single()
     if (error) {
       const missingLevel = /again_level/.test(error.message)
+      const missingPrivate = /is_private/.test(error.message)
       throw new Error(
         missingLevel
           ? '段階を保存するには、Supabase の SQL Editor で migration_add_again_level.sql を一度実行してください'
-          : error.message,
+          : missingPrivate
+            ? '非公開にするには、Supabase の SQL Editor で migration_add_private.sql を一度実行してください'
+            : error.message,
       )
     }
     upsertLocal(data as Place)

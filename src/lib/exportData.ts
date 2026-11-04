@@ -26,6 +26,7 @@ type ExportPlace = {
   address: string | null
   lat: number | null
   lng: number | null
+  is_private: boolean
   created_at: string
   updated_at: string
 }
@@ -49,6 +50,7 @@ export function buildExport(couple: Couple, places: Place[]): ExportFile {
       address: place.address,
       lat: place.lat,
       lng: place.lng,
+      is_private: Boolean(place.is_private),
       created_at: place.created_at,
       updated_at: place.updated_at,
     })),
@@ -56,7 +58,22 @@ export function buildExport(couple: Couple, places: Place[]): ExportFile {
 }
 
 export function toCsv(file: ExportFile) {
-  const headers = ['名前', '種類', '状態', 'また行きたい', '日付', '評価', 'タグ', 'メモ', 'リンク', '住所', '緯度', '経度', '追加日時']
+  const headers = [
+    '名前',
+    '種類',
+    '状態',
+    'また行きたい',
+    '日付',
+    '評価',
+    'タグ',
+    'メモ',
+    'リンク',
+    '住所',
+    '緯度',
+    '経度',
+    '非公開',
+    '追加日時',
+  ]
   const rows = file.places.map((place) => {
     const category = getCategory(place.category)
     const statusLabel = place.status === 'visited' ? category.done : category.want
@@ -74,6 +91,7 @@ export function toCsv(file: ExportFile) {
       place.address ?? '',
       place.lat == null ? '' : String(place.lat),
       place.lng == null ? '' : String(place.lng),
+      place.is_private ? 'はい' : '',
       place.created_at,
     ]
   })

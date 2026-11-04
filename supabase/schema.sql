@@ -35,6 +35,7 @@ create table if not exists public.places (
   address text,
   lat double precision,
   lng double precision,
+  is_private boolean not null default false,
   created_by uuid references auth.users(id) on delete set null default auth.uid(),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -87,8 +88,39 @@ create policy "update own member row" on public.couple_members
   for update using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 drop policy if exists "members manage places" on public.places;
-create policy "members manage places" on public.places
-  for all using (public.is_member(couple_id)) with check (public.is_member(couple_id));
+drop policy if exists "members read places" on public.places;
+drop policy if exists "members insert places" on public.places;
+drop policy if exists "members update places" on public.places;
+drop policy if exists "members delete places" on public.places;
+
+create policy "members read places" on public.places
+  for select using (
+    public.is_member(couple_id)
+    and (not is_private or created_by = auth.uid())
+  );
+
+create policy "members insert places" on public.places
+  for insert with check (
+    public.is_member(couple_id)
+    and (not is_private or created_by = auth.uid())
+  );
+
+create policy "members update places" on public.places
+  for update
+  using (
+    public.is_member(couple_id)
+    and (not is_private or created_by = auth.uid())
+  )
+  with check (
+    public.is_member(couple_id)
+    and (not is_private or created_by = auth.uid())
+  );
+
+create policy "members delete places" on public.places
+  for delete using (
+    public.is_member(couple_id)
+    and (not is_private or created_by = auth.uid())
+  );
 
 -- ペアの作成と参加（RLS を迂回するため security definer）
 create or replace function public.create_couple(p_name text, p_anniversary date, p_display_name text)

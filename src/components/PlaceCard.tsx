@@ -27,7 +27,10 @@ export default function PlaceCard({ place, authorName, compact, onEdit, onVisite
           <button type="button" className="want-row-main" onClick={onEdit}>
             <span className="pin-dot" aria-hidden="true" />
             <span className="want-copy">
-              <span className="place-title">{place.title}</span>
+              <span className="place-title">
+                {place.title}
+                {place.is_private && <span className="private-mark">Private</span>}
+              </span>
               {place.address && <span className="want-area">{place.address}</span>}
             </span>
           </button>
@@ -59,7 +62,10 @@ export default function PlaceCard({ place, authorName, compact, onEdit, onVisite
         <div className="memory-main">
           <span className="pin-dot" aria-hidden="true" />
           <div>
-            <div className="place-title">{place.title}</div>
+            <div className="place-title">
+              {place.title}
+              {place.is_private && <span className="private-mark">Private</span>}
+            </div>
             {place.address && <div className="place-address">{place.address}</div>}
             {place.memo && <p className="place-memo">{place.memo}</p>}
             <Stars value={place.rating} />

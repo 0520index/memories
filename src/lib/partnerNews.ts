@@ -24,7 +24,11 @@ export function partnerAdditions(places: Place[], userId: string, seenAt: string
   const seenTime = Date.parse(seenAt)
   if (Number.isNaN(seenTime)) return []
   return places.filter(
-    (place) => place.created_by && place.created_by !== userId && Date.parse(place.created_at) > seenTime,
+    (place) =>
+      place.created_by &&
+      place.created_by !== userId &&
+      !place.is_private &&
+      Date.parse(place.created_at) > seenTime,
   )
 }
 

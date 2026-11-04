@@ -31,6 +31,7 @@ const EMPTY: PlaceInput = {
   address: null,
   lat: null,
   lng: null,
+  is_private: false,
 }
 
 export default function PlaceForm({ place, preset, existingTags, onSave, onDelete, onClose }: Props) {
@@ -148,6 +149,18 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
             {cat.done}
           </button>
         </div>
+
+        <label className="toggle">
+          <input
+            type="checkbox"
+            checked={form.is_private}
+            onChange={(e) => set('is_private', e.target.checked)}
+          />
+          <span>
+            Private
+            <span className="muted small-text"> 相手には表示されません</span>
+          </span>
+        </label>
 
         {visited && (
           <>
@@ -320,7 +333,21 @@ export default function PlaceForm({ place, preset, existingTags, onSave, onDelet
 
 function pick(place: Place | null): Partial<PlaceInput> {
   if (!place) return {}
-  const { title, category, status, want_again, again_level, visited_on, rating, tags, memo, address, lat, lng } = place
+  const {
+    title,
+    category,
+    status,
+    want_again,
+    again_level,
+    visited_on,
+    rating,
+    tags,
+    memo,
+    address,
+    lat,
+    lng,
+    is_private,
+  } = place
   return {
     title,
     category: category || DEFAULT_CATEGORY,
@@ -335,6 +362,7 @@ function pick(place: Place | null): Partial<PlaceInput> {
     address,
     lat,
     lng,
+    is_private: Boolean(is_private),
   }
 }
 
